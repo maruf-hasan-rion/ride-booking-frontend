@@ -13,27 +13,39 @@ import {
 } from "@/components/ui/popover";
 import { ModeToggle } from "./ModeToggler";
 import { Link } from "react-router";
-import { authApi, useLogoutMutation, useUserInfoQuery } from "@/redux/features/auth/auth.api";
+import {
+  authApi,
+  useLogoutMutation,
+  useUserInfoQuery,
+} from "@/redux/features/auth/auth.api";
 import { useAppDispatch } from "@/redux/hook";
+import { role } from "@/constants/role";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: "/", label: "Home",role:"PUBLIC" },
+  { href: "/about", label: "About",role:"PUBLIC" },
+  { href: "/features", label: "Features",role:"PUBLIC" },
+  { href: "/faq", label: "FAQ",role:"PUBLIC" },
+  { href: "/contact", label: "Contact",role:"PUBLIC" },
+  { href: "/admin", label: "Dashboard", role: role.superAdmin },
+  { href: "/admin", label: "Dashboard", role: role.admin },
+  { href: "/user", label: "Dashboard", role: role.rider },
+  { href: "/driver", label: "Dashboard",role: role.driver},
 ];
 
 export default function Navbar() {
-const { data } = useUserInfoQuery(undefined);
-console.log(data?.data?.email);
-const [logout] = useLogoutMutation();
   const dispatch = useAppDispatch();
+  const { data } = useUserInfoQuery(undefined);
+  console.log(data?.data?.email);
+  const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
     await logout(undefined);
     dispatch(authApi.util.resetApiState());
   };
   return (
-    <header className="border-b">
+    <header className="border-b py-1 px-4 sticky top-0 z-50 backdrop-blur-xl">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex items-center gap-2">
@@ -76,33 +88,67 @@ const [logout] = useLogoutMutation();
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => (
-                    <NavigationMenuItem key={index} className="w-full">
-                      <NavigationMenuLink asChild className="py-1.5">
-                        <Link to={link.href}>{link.label} </Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
+                   <>
+                    {link.role === "PUBLIC" && (
+                      <NavigationMenuItem key={index}>
+                        <NavigationMenuLink
+                          asChild
+                          className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                        >
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                    {link.role === data?.data?.role && (
+                      <NavigationMenuItem key={index}>
+                        <NavigationMenuLink
+                          asChild
+                          className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                        >
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                  </>
                   ))}
                 </NavigationMenuList>
               </NavigationMenu>
             </PopoverContent>
           </Popover>
+            <Link
+              to="/"
+              className="text-emerald-500 text-2xl font-bold hover:text-emerald-600"
+            >
+              Ride Hero
+            </Link>
           {/* Main nav */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-emerald-500 text-2xl font-bold hover:text-emerald-600">
-              Ride Hero
-            </a>
             {/* Navigation menu */}
             <NavigationMenu className="max-md:hidden">
               <NavigationMenuList className="gap-2">
                 {navigationLinks.map((link, index) => (
-                  <NavigationMenuItem key={index}>
-                    <NavigationMenuLink
-                      asChild
-                      className="text-muted-foreground hover:text-primary py-1.5 font-medium"
-                    >
-                      <Link to={link.href}>{link.label}</Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
+                   <>
+                    {link.role === "PUBLIC" && (
+                      <NavigationMenuItem key={index}>
+                        <NavigationMenuLink
+                          asChild
+                          className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                        >
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                    {link.role === data?.data?.role && (
+                      <NavigationMenuItem key={index}>
+                        <NavigationMenuLink
+                          asChild
+                          className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                        >
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                  </>
                 ))}
               </NavigationMenuList>
             </NavigationMenu>

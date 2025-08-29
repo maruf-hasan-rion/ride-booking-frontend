@@ -4,19 +4,17 @@ import type { ISidebarItem } from "@/types";
 
 export const userSidebarItems: ISidebarItem[] = [
   {
-    title: "Profile",
+    title: "Dashboard",
     items: [
       {
-        title: "Profile",
-        url: "/user/me",
+        title: "Update Profile",
+        url: "/user/profile",
         component: Profile,
-        isActive: undefined,
       },
       {
         title: "Ride",
         url: "/user/ride/request",
         component: RideRequest,
-        isActive: undefined,
       },
     ],
   },

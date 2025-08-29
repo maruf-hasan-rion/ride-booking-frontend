@@ -9,6 +9,42 @@ export default function About() {
           eos necessitatibus nesciunt, in neque consequatur adipisci velit
           accusantium illum.
         </p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, qui
+          eos. Architecto quisquam odit soluta fugit quos ab unde, voluptatem
+          eos necessitatibus nesciunt, in neque consequatur adipisci velit
+          accusantium illum.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, qui
+          eos. Architecto quisquam odit soluta fugit quos ab unde, voluptatem
+          eos necessitatibus nesciunt, in neque consequatur adipisci velit
+          accusantium illum.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, qui
+          eos. Architecto quisquam odit soluta fugit quos ab unde, voluptatem
+          eos necessitatibus nesciunt, in neque consequatur adipisci velit
+          accusantium illum.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, qui
+          eos. Architecto quisquam odit soluta fugit quos ab unde, voluptatem
+          eos necessitatibus nesciunt, in neque consequatur adipisci velit
+          accusantium illum.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, qui
+          eos. Architecto quisquam odit soluta fugit quos ab unde, voluptatem
+          eos necessitatibus nesciunt, in neque consequatur adipisci velit
+          accusantium illum.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, qui
+          eos. Architecto quisquam odit soluta fugit quos ab unde, voluptatem
+          eos necessitatibus nesciunt, in neque consequatur adipisci velit
+          accusantium illum.
+        </p>
       </div>
     </>
   );

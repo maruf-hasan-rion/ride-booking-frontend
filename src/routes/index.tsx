@@ -12,15 +12,31 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { adminSidebarItems } from "./adminSidebarItems";
 import { userSidebarItems } from "./userSidebarItems";
 import Unauthorized from "@/pages/Unauthorized";
+import Features from "@/pages/Features";
+import Contact from "@/pages/Contact";
+import FAQ from "@/pages/FAQ";
+import { driverSidebarItems } from "./driverSidebarItems";
 
 export const router = createBrowserRouter([
   {
-    Component: App,
     path: "/",
+    Component: App,
     children: [
       {
-        Component: withAuth(About),
         path: "about",
+        Component: About,
+      },
+      {
+        path: "features",
+        Component: Features,
+      },
+      {
+        path: "contact",
+        Component: Contact,
+      },
+      {
+        path: "faq",
+        Component: FAQ,
       },
     ],
   },
@@ -36,7 +52,7 @@ export const router = createBrowserRouter([
     Component: withAuth(DashboardLayout, role.admin as TRole),
     path: "/admin",
     children: [
-      { index: true, element: <Navigate to="/admin/stats" /> },
+      { index: true, element: <Navigate to="/admin/me" /> },
       ...generateRoutes(adminSidebarItems),
     ],
   },
@@ -49,20 +65,28 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    Component: Login,
+    Component: withAuth(DashboardLayout, role.driver as TRole),
+    path: "/driver",
+    children: [
+      { index: true, element: <Navigate to="/driver/me" /> },
+      ...generateRoutes(driverSidebarItems),
+    ],
+  },
+  {
     path: "/login",
+    Component: Login,
   },
   {
-    Component: Register,
     path: "/register",
+    Component: Register,
   },
   {
-    Component: Verify,
     path: "/verify",
+    Component: Verify,
   },
   {
-    Component: Unauthorized,
     path: "/unauthorized",
+    Component: Unauthorized,
   },
 ]);
 

@@ -1,5 +1,3 @@
-// import Logo from "@/assets/icons/Logo";
-
 export default function Footer() {
   return (
     <footer className="border-t">
@@ -11,14 +9,13 @@ export default function Footer() {
             </div>
 
             <p className="mt-4 max-w-xs text-muted-foreground">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse non
-              cupiditate quae nam molestias.
+             Connect with countless riders and drivers on our dependable platform. Secure, trustworthy, and always ready for you.
             </p>
 
             <ul className="mt-8 flex gap-6">
               <li>
                 <a
-                  href="#"
+                  href="https://www.facebook.com"
                   rel="noreferrer"
                   target="_blank"
                   className="text-foreground/80 transition hover:text-foreground"
@@ -42,7 +39,7 @@ export default function Footer() {
 
               <li>
                 <a
-                  href="#"
+                  href="https://x.com"
                   rel="noreferrer"
                   target="_blank"
                   className="text-foreground/80 transition hover:text-foreground"
@@ -62,7 +59,7 @@ export default function Footer() {
 
               <li>
                 <a
-                  href="#"
+                  href="https://github.com"
                   rel="noreferrer"
                   target="_blank"
                   className="text-foreground/80 transition hover:text-foreground"
@@ -88,56 +85,46 @@ export default function Footer() {
 
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-4">
             <div>
-              <p className="font-medium text-foreground/90">Services</p>
+              <p className="font-medium text-foreground/90">Quick Links</p>
 
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
                   <a
-                    href="#"
+                    href="/"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
-                    1on1 Coaching{" "}
+                    Home{" "}
                   </a>
                 </li>
 
                 <li>
                   <a
-                    href="#"
+                    href="/user/ride/request"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
-                    Company Review{" "}
+                   Book a Ride{" "}
                   </a>
                 </li>
 
                 <li>
                   <a
-                    href="#"
+                    href="/driver/me"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
-                    Accounts Review{" "}
+                    Become a Driver{" "}
                   </a>
                 </li>
 
                 <li>
                   <a
-                    href="#"
+                    href="/about"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
-                    HR Consulting{" "}
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground/90 transition hover:text-foreground/60"
-                  >
-                    {" "}
-                    SEO Optimisation{" "}
+                    Help Center{" "}
                   </a>
                 </li>
               </ul>
@@ -149,17 +136,17 @@ export default function Footer() {
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
                   <a
-                    href="#"
+                    href="/about"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
-                    About{" "}
+                    About Us{" "}
                   </a>
                 </li>
 
                 <li>
                   <a
-                    href="#"
+                    href="/about"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
@@ -169,7 +156,7 @@ export default function Footer() {
 
                 <li>
                   <a
-                    href="#"
+                    href="/about"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
@@ -185,7 +172,7 @@ export default function Footer() {
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
                   <a
-                    href="#"
+                    href="/contact"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
@@ -195,21 +182,11 @@ export default function Footer() {
 
                 <li>
                   <a
-                    href="#"
+                    href="/faq"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
                     FAQs{" "}
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground/90 transition hover:text-foreground/60"
-                  >
-                    {" "}
-                    Live Chat{" "}
                   </a>
                 </li>
               </ul>
@@ -221,40 +198,11 @@ export default function Footer() {
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
                   <a
-                    href="#"
+                    href="/faq"
                     className="text-foreground/90 transition hover:text-foreground/60"
                   >
                     {" "}
-                    Accessibility{" "}
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground/90 transition hover:text-foreground/60"
-                  >
-                    {" "}
-                    Returns Policy{" "}
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground/90 transition hover:text-foreground/60"
-                  >
-                    {" "}
-                    Refund Policy{" "}
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground/90 transition hover:text-foreground/60"
-                  >
-                    Hiring-3 Statistics
+                   Terms of Service{" "}
                   </a>
                 </li>
               </ul>

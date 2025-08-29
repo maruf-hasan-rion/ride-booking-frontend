@@ -214,6 +214,7 @@ const RideRequest = () => {
                         name="latitude"
                         type="number"
                         step="any"
+               
                         placeholder="e.g., 40.7589"
                         className="font-mono"
                         value={formData.dropOffLocation.latitude}
