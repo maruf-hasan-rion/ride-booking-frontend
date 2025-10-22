@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/baseApi";
 import type { IResponse, ISendOtp, IVerifyOtp } from "@/types";
 
@@ -38,12 +39,36 @@ export const authApi = baseApi.injectEndpoints({
         data: userInfo,
       }),
     }),
+
     userInfo: builder.query({
       query: () => ({
         url: "/user/me",
         method: "GET",
       }),
-      // providesTags: ["USER"],
+      providesTags: ["USER"],
+    }),
+
+    updateUserProfile: builder.mutation<
+      IResponse<null>,
+      { id: string; data: any }
+    >({
+      query: ({ id, data }) => ({
+        url: `/user/${id}`,
+        method: "PATCH",
+        data,
+      }),
+      invalidatesTags: ["USER"],
+    }),
+
+    changePassword: builder.mutation<
+      IResponse<null>,
+      { oldPassword: string; newPassword: string }
+    >({
+      query: (data) => ({
+        url: "/auth/change-password",
+        method: "PATCH",
+        data,
+      }),
     }),
   }),
 });
@@ -54,5 +79,7 @@ export const {
   useSendOtpMutation,
   useVerifyOtpMutation,
   useUserInfoQuery,
+  useUpdateUserProfileMutation,
+  useChangePasswordMutation,
   useLogoutMutation,
 } = authApi;

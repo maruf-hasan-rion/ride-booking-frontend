@@ -16,12 +16,17 @@ import Features from "@/pages/Features";
 import Contact from "@/pages/Contact";
 import FAQ from "@/pages/FAQ";
 import { driverSidebarItems } from "./driverSidebarItems";
+import Home from "@/pages/Home";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: App,
     children: [
+      {
+        path: "/",
+        Component: Home,
+      },
       {
         path: "about",
         Component: About,
@@ -52,7 +57,7 @@ export const router = createBrowserRouter([
     Component: withAuth(DashboardLayout, role.admin as TRole),
     path: "/admin",
     children: [
-      { index: true, element: <Navigate to="/admin/me" /> },
+      { index: true, element: <Navigate to="/admin/profile" /> },
       ...generateRoutes(adminSidebarItems),
     ],
   },
@@ -60,7 +65,7 @@ export const router = createBrowserRouter([
     Component: withAuth(DashboardLayout, role.rider as TRole),
     path: "/user",
     children: [
-      { index: true, element: <Navigate to="/user/me" /> },
+      { index: true, element: <Navigate to="/user/profile" /> },
       ...generateRoutes(userSidebarItems),
     ],
   },
@@ -68,7 +73,7 @@ export const router = createBrowserRouter([
     Component: withAuth(DashboardLayout, role.driver as TRole),
     path: "/driver",
     children: [
-      { index: true, element: <Navigate to="/driver/me" /> },
+      { index: true, element: <Navigate to="/driver/profile" /> },
       ...generateRoutes(driverSidebarItems),
     ],
   },
