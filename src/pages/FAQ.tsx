@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { Link } from "react-router";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Faq = () => {
   const [openItem, setOpenItem] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   
   const heading = "Frequently Asked Questions";
   const description =
@@ -76,76 +79,97 @@ const Faq = () => {
     setOpenItem(openItem === id ? null : id);
   };
 
+  const filteredFaqItems = faqItems.filter((item) => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return true;
+    return (
+      item.question.toLowerCase().includes(query) ||
+      item.answer.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-emerald-950/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-12">
           {/* Header Section */}
           <div className="mx-auto flex max-w-2xl flex-col text-center">
-            <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-              <HelpCircle className="w-7 h-7 text-white" />
+            <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-gradient-to-r brand-gradient-bg flex items-center justify-center">
+              <HelpCircle className="w-7 h-7 text-primary-foreground" />
             </div>
-            <h1 className="mb-4 text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
+            <h1 className="mb-4 text-3xl md:text-4xl font-bold brand-gradient-text">
               {heading}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">{description}</p>
+            <p className="text-muted-foreground text-lg">{description}</p>
           </div>
 
           {/* FAQ Accordion */}
           <div className="mx-auto w-full max-w-3xl">
+            <div className="mb-4">
+              <Input
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search questions..."
+              />
+            </div>
             <div className="space-y-3">
-              {faqItems.map((item) => (
+              {filteredFaqItems.map((item) => (
                 <div
                   key={item.id}
-                  className="border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900 overflow-hidden hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-lg"
+                  className="border border-border rounded-xl bg-card overflow-hidden hover:border-primary/40 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-lg"
                 >
                   <button
+                    type="button"
                     onClick={() => toggleItem(item.id)}
                     className="w-full px-6 py-4 flex items-center justify-between text-left group"
+                    aria-expanded={openItem === item.id}
+                    aria-controls={`${item.id}-panel`}
                   >
-                    <span className="font-medium text-gray-900 dark:text-gray-100 text-sm md:text-base pr-4 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    <span className="font-medium text-foreground dark:text-gray-100 text-sm md:text-base pr-4 group-hover:text-primary dark:group-hover:text-emerald-400 transition-colors">
                       {item.question}
                     </span>
                     <ChevronDown
-                      className={`w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 transition-transform duration-300 ${
+                      className={`w-5 h-5 text-primary flex-shrink-0 transition-transform duration-300 ${
                         openItem === item.id ? "rotate-180" : ""
                       }`}
                     />
                   </button>
                   
                   <div
+                    id={`${item.id}-panel`}
                     className={`overflow-hidden transition-all duration-300 ${
                       openItem === item.id ? "max-h-96" : "max-h-0"
                     }`}
                   >
                     <div className="px-6 pb-4 pt-0">
                       <div className="h-px bg-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-800 dark:to-teal-800 mb-4"></div>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                      <p className="text-muted-foreground text-sm leading-relaxed">
                         {item.answer}
                       </p>
                     </div>
                   </div>
                 </div>
               ))}
+              {filteredFaqItems.length === 0 && (
+                <div className="rounded-xl border border-dashed p-6 text-center text-muted-foreground">
+                  No FAQ items match your search.
+                </div>
+              )}
             </div>
           </div>
 
           {/* CTA Section */}
           <div className="mx-auto max-w-2xl">
-            <div className="bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-950/40 dark:to-teal-950/30 rounded-2xl p-8 border border-emerald-200 dark:border-emerald-800/50 text-center">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <div className="bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-950/40 dark:to-teal-950/30 rounded-2xl p-8 border border-primary/25/50 text-center">
+              <h3 className="text-xl font-semibold text-foreground dark:text-gray-100 mb-2">
                 Still have questions?
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Our support team is available 24/7 to help you with any concerns
               </p>
-              <Link to="/contact">
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium transition-all duration-300 hover:shadow-lg"
-              >
-                Contact Support
-              </button></Link>
+              <Button asChild className="brand-gradient-bg hover:opacity-90">
+                <Link to="/contact">Contact Support</Link>
+              </Button>
             </div>
           </div>
         </div>

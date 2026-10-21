@@ -36,7 +36,7 @@ const roleSections: RoleSection[] = [
       "Book and manage rides with real-time tracking, complete history, profile control, and safety support.",
     ctaLabel: "Start as Rider",
     ctaPath: "/register",
-    color: "from-emerald-500 to-teal-600",
+    color: "brand-gradient-bg",
     features: [
       {
         title: "Ride Request & Fare Estimate",
@@ -64,7 +64,7 @@ const roleSections: RoleSection[] = [
       "Manage availability, respond to incoming ride requests, update active ride status, and monitor earnings.",
     ctaLabel: "Apply as Driver",
     ctaPath: "/register",
-    color: "from-teal-500 to-emerald-600",
+    color: "brand-gradient-bg",
     features: [
       {
         title: "Availability Control",
@@ -92,7 +92,7 @@ const roleSections: RoleSection[] = [
       "Oversee users, rides, and platform performance with centralized controls and analytics dashboards.",
     ctaLabel: "Contact for Admin Access",
     ctaPath: "/contact",
-    color: "from-emerald-600 to-emerald-700",
+    color: "brand-gradient-bg",
     features: [
       {
         title: "User Management",
@@ -140,7 +140,7 @@ export default function Features() {
                   <p className="mt-2 max-w-3xl text-muted-foreground">{section.summary}</p>
                 </div>
 
-                <Button asChild className={`bg-gradient-to-r ${section.color} text-white hover:opacity-90`}>
+                <Button asChild className={`bg-gradient-to-r ${section.color} text-primary-foreground hover:opacity-90`}>
                   <Link to={section.ctaPath}>
                     {section.ctaLabel}
                     <ArrowRight className="ml-2 h-4 w-4" />

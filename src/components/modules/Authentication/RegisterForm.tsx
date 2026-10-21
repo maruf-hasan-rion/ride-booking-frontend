@@ -18,24 +18,36 @@ import Password from "@/components/ui/Password";
 import { useRegisterMutation } from "@/redux/features/auth/auth.api";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import config from "@/config";
+import { getApiErrorMessage } from "@/utils/apiResponse";
 
 const registerSchema = z
   .object({
     name: z
       .string()
+      .trim()
       .min(3, {
         error: "Name is too short",
-      })
+    })
       .max(50),
-    email: z.email(),
-    role:z.string(),
-    password: z.string().min(8, { error: "Password is too short" }),
-    confirmPassword: z
+    email: z.string().trim().email("Please enter a valid email address."),
+    role: z.enum(["RIDER", "DRIVER"], { message: "Please select Rider or Driver role." }),
+    password: z
       .string()
-      .min(8, { error: "Confirm Password is too short" }),
+      .min(8, { error: "Password must be at least 8 characters." })
+      .regex(/^(?=.*[A-Z])/, {
+        message: "Password must contain at least 1 uppercase letter.",
+      })
+      .regex(/^(?=.*\d)/, {
+        message: "Password must contain at least 1 number.",
+      })
+      .regex(/^(?=.*[!@#$%^&*])/, {
+        message: "Password must contain at least 1 special character.",
+      }),
+    confirmPassword: z.string().min(8, { error: "Confirm password must be at least 8 characters." }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Password do not match",
+    message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
 
@@ -51,7 +63,7 @@ export function RegisterForm({
     defaultValues: {
       name: "",
       email: "",
-      role:"",
+      role: undefined,
       password: "",
       confirmPassword: "",
     },
@@ -61,17 +73,18 @@ export function RegisterForm({
     const userInfo = {
       name: data.name,
       email: data.email,
-      role:data.role,
+      role: data.role,
       password: data.password,
     };
-console.log(userInfo);
+
     try {
-      const result = await register(userInfo).unwrap();
-      console.log(result);
+      await register(userInfo).unwrap();
       toast.success("User created successfully");
-      navigate("/verify");
+      navigate(`/verify?email=${encodeURIComponent(data.email)}`, {
+        state: { email: data.email },
+      });
     } catch (error) {
-      console.error(error);
+      toast.error(getApiErrorMessage(error, "Registration failed. Please try again."));
     }
   };
 
@@ -131,10 +144,10 @@ console.log(userInfo);
                     <FormLabel>Role</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value || undefined}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select a Role" />
                         </SelectTrigger>
                       </FormControl>
@@ -143,6 +156,10 @@ console.log(userInfo);
                         <SelectItem value="DRIVER">Driver</SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormDescription>
+                      Admin accounts are created by the platform team.
+                    </FormDescription>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -155,8 +172,9 @@ console.log(userInfo);
                   <FormControl>
                     <Password {...field} />
                   </FormControl>
-                  <FormDescription className="sr-only">
-                    This is your public display name.
+                  <FormDescription>
+                    Use at least 8 characters, 1 uppercase letter, 1 number, and 1 special
+                    character.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -191,9 +209,10 @@ console.log(userInfo);
         </div>
 
         <Button
+          onClick={() => window.open(`${config.baseUrl}/auth/google`, "_self")}
           type="button"
           variant="outline"
-          className="w-full cursor-pointer"
+          className="w-full cursor-pointer border-primary/40 hover:border-emerald-400 hover:text-primary"
         >
           Login with Google
         </Button>

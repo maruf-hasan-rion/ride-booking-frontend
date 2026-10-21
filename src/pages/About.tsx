@@ -22,25 +22,25 @@ const SUPPORT_EMAIL = "support@gomove.app";
 
 const features = [
   {
-    icon: <Car className="h-8 w-8 text-emerald-600" />,
+    icon: <Car className="h-8 w-8 text-primary" />,
     title: "Seamless Ride Booking",
     description:
       "Book rides instantly across Bangladesh with transparent fares and live driver tracking.",
   },
   {
-    icon: <Shield className="h-8 w-8 text-emerald-600" />,
+    icon: <Shield className="h-8 w-8 text-primary" />,
     title: "Safe and Secure",
     description:
       "Every driver is verified and every ride is monitored end-to-end.",
   },
   {
-    icon: <Users className="h-8 w-8 text-emerald-600" />,
+    icon: <Users className="h-8 w-8 text-primary" />,
     title: "Trusted Drivers",
     description:
       "Background-checked drivers provide reliable service for daily commuting.",
   },
   {
-    icon: <MapPin className="h-8 w-8 text-emerald-600" />,
+    icon: <MapPin className="h-8 w-8 text-primary" />,
     title: "Smart Navigation",
     description:
       "Optimized route selection helps reduce delays and improve fare efficiency.",
@@ -56,19 +56,19 @@ const stats = [
 
 const values = [
   {
-    icon: <CheckCircle className="h-6 w-6 text-emerald-600" />,
+    icon: <CheckCircle className="h-6 w-6 text-primary" />,
     title: "Safety First",
     description:
       "SOS alerts, verified drivers, and live location updates on active rides.",
   },
   {
-    icon: <Globe className="h-6 w-6 text-emerald-600" />,
+    icon: <Globe className="h-6 w-6 text-primary" />,
     title: "Eco-Friendly Mobility",
     description:
       "We promote fuel-efficient transportation options for city movement.",
   },
   {
-    icon: <Award className="h-6 w-6 text-emerald-600" />,
+    icon: <Award className="h-6 w-6 text-primary" />,
     title: "Innovation in Motion",
     description:
       "Modern product design and reliable APIs keep rider-driver workflows smooth.",
@@ -117,12 +117,12 @@ const About = () => {
         <div className="section-shell">
           <Badge
             variant="outline"
-            className="mb-4 border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-700"
+            className="mb-4 border-emerald-700 bg-primary text-primary-foreground hover:bg-emerald-700"
           >
             About Our Ride Platform
           </Badge>
           <motion.h1
-            className="mb-6 text-pretty text-3xl font-extrabold leading-tight tracking-tight text-emerald-700 dark:text-emerald-400 md:text-5xl"
+            className="mb-6 text-pretty text-3xl font-extrabold leading-tight tracking-tight text-primary dark:text-emerald-400 md:text-5xl"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -142,7 +142,7 @@ const About = () => {
       <section className="bg-muted py-16 dark:bg-gray-900">
         <div className="section-shell">
           <div className="mb-12 text-center">
-            <Badge variant="outline" className="mb-4 border-emerald-500 text-emerald-600 dark:text-emerald-400">
+            <Badge variant="outline" className="mb-4 border-emerald-500 text-primary">
               What We Offer
             </Badge>
             <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
@@ -199,7 +199,7 @@ const About = () => {
           <div className="grid grid-cols-2 gap-6 rounded-2xl bg-gradient-to-br from-emerald-100/40 to-emerald-50/60 p-8 dark:from-emerald-900/30 dark:to-gray-800/30">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="mb-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                <div className="mb-2 text-3xl font-bold text-primary">
                   {stat.value}
                 </div>
                 <div className="text-muted-foreground">{stat.label}</div>
@@ -211,7 +211,7 @@ const About = () => {
 
       <section className="bg-muted py-16 dark:bg-gray-900 md:py-24">
         <div className="section-shell text-center">
-          <Badge variant="outline" className="mb-4 border-emerald-500 text-emerald-600 dark:text-emerald-400">
+          <Badge variant="outline" className="mb-4 border-emerald-500 text-primary">
             Our Team
           </Badge>
           <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
@@ -234,17 +234,17 @@ const About = () => {
                     />
                   </div>
                   <h3 className="mb-1 text-xl font-semibold text-foreground">{member.name}</h3>
-                  <p className="mb-3 font-medium text-emerald-600 dark:text-emerald-400">
+                  <p className="mb-3 font-medium text-primary">
                     {member.position}
                   </p>
                   <p className="mb-4 text-sm text-muted-foreground">{member.bio}</p>
                   <div className="flex justify-center gap-3">
-                    <Button asChild variant="outline" size="sm" className="border-emerald-500 p-2 hover:bg-emerald-600 hover:text-white">
+                    <Button asChild variant="outline" size="sm" className="border-emerald-500 p-2 hover:bg-primary hover:text-primary-foreground">
                       <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
                         <Mail className="h-4 w-4" />
                       </a>
                     </Button>
-                    <Button asChild variant="outline" size="sm" className="border-emerald-500 p-2 hover:bg-emerald-600 hover:text-white">
+                    <Button asChild variant="outline" size="sm" className="border-emerald-500 p-2 hover:bg-primary hover:text-primary-foreground">
                       <a
                         href={member.linkedin}
                         target="_blank"
@@ -275,7 +275,7 @@ const About = () => {
               asChild
               variant="default"
               size="lg"
-              className="bg-emerald-600 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-emerald-700 hover:shadow-xl"
+              className="bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-105 hover:bg-emerald-700 hover:shadow-xl"
             >
               <Link to="/login">
                 Book a Ride
@@ -286,7 +286,7 @@ const About = () => {
               asChild
               variant="outline"
               size="lg"
-              className="border-emerald-500 text-emerald-600 transition-all duration-300 hover:bg-emerald-600 hover:text-white"
+              className="border-emerald-500 text-primary transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
             >
               <Link to="/login">Become a Driver</Link>
             </Button>

@@ -28,26 +28,52 @@ import {
 } from "@/redux/features/auth/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dot } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation,} from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
-import z from "zod";
+import { z } from "zod";
+import { getApiErrorMessage } from "@/utils/apiResponse";
 
 const FormSchema = z.object({
-  pin: z.string().min(6, {
-    message: "Your one-time password must be 6 characters.",
+  pin: z.string().regex(/^\d{6}$/, {
+    message: "OTP must be exactly 6 digits.",
   }),
 });
 
+const RESEND_TIMER_SECONDS = 30;
+
+const getEmailFromLocationState = (state: unknown) => {
+  if (typeof state === "string") {
+    return state.trim();
+  }
+
+  if (
+    typeof state === "object" &&
+    state !== null &&
+    "email" in state &&
+    typeof state.email === "string"
+  ) {
+    return state.email.trim();
+  }
+
+  return "";
+};
+
 export default function Verify() {
   const location = useLocation();
-  // const navigate = useNavigate();
-  const [email] = useState(location.state);
-  const [confirmed, setConfirmed] = useState(false);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const email = useMemo(() => {
+    return (
+      searchParams.get("email")?.trim() ||
+      getEmailFromLocationState(location.state)
+    );
+  }, [location.state, searchParams]);
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const [sendOtp] = useSendOtpMutation();
   const [verifyOtp] = useVerifyOtpMutation();
-  const [timer, setTimer] = useState(5);
+  const [timer, setTimer] = useState(RESEND_TIMER_SECONDS);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -57,6 +83,12 @@ export default function Verify() {
   });
 
   const handleSendOtp = async () => {
+    if (!email) {
+      toast.error("Email not found for verification.");
+      navigate("/login");
+      return;
+    }
+
     const toastId = toast.loading("Sending OTP");
 
     try {
@@ -64,11 +96,11 @@ export default function Verify() {
 
       if (res.success) {
         toast.success("OTP Sent", { id: toastId });
-        setConfirmed(true);
-        setTimer(5);
+        setIsOtpSent(true);
+        setTimer(RESEND_TIMER_SECONDS);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to send OTP. Please try again."));
     }
   };
 
@@ -83,22 +115,22 @@ export default function Verify() {
       const res = await verifyOtp(userInfo).unwrap();
       if (res.success) {
         toast.success("OTP Verified", { id: toastId });
-        setConfirmed(true);
+        navigate("/login");
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "OTP verification failed. Please try again."));
     }
   };
 
-  //! Needed - Turned off for development
-  //   useEffect(() => {
-  //     if (!email) {
-  //       navigate("/");
-  //     }
-  //   }, [email]);
+  useEffect(() => {
+    if (!email) {
+      toast.error("Verification email was not found. Please register again.");
+      navigate("/register", { replace: true });
+    }
+  }, [email, navigate]);
 
   useEffect(() => {
-    if (!email || !confirmed) {
+    if (!email || !isOtpSent) {
       return;
     }
 
@@ -107,11 +139,15 @@ export default function Verify() {
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, [email, confirmed]);
+  }, [email, isOtpSent]);
+
+  if (!email) {
+    return null;
+  }
 
   return (
     <div className="grid place-content-center h-screen">
-      {confirmed ? (
+      {isOtpSent ? (
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">Verify your email address</CardTitle>
@@ -163,10 +199,10 @@ export default function Verify() {
                           disabled={timer !== 0}
                           className={cn("p-0 m-0", {
                             "cursor-pointer": timer === 0,
-                            "text-gray-500": timer !== 0,
+                            "text-muted-foreground": timer !== 0,
                           })}
                         >
-                          Resent OPT:{" "}
+                          Resend OTP:
                         </Button>{" "}
                         {timer}
                       </FormDescription>

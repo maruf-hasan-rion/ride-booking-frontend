@@ -49,24 +49,24 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-950/50 rounded-full border border-emerald-200 dark:border-emerald-800">
-              <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full border border-primary/25">
+              <Zap className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">
                 Your ride, on demand
               </span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
+              <span className="brand-gradient-text">
                 Get There Faster,
               </span>
               <br />
-              <span className="text-gray-900 dark:text-white">
+              <span className="text-foreground">
                 Safer, Smarter
               </span>
             </h1>
 
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl">
+            <p className="text-lg text-muted-foreground max-w-xl">
               Book a ride in seconds. Track in real-time. Arrive with confidence. 
               Your trusted transportation partner for every journey.
             </p>
@@ -74,42 +74,42 @@ const HeroSection = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
               <Link
                 to="/login"
-                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r brand-gradient-bg text-primary-foreground font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
               >
                 Book a Ride
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 to="/login"
-                className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-xl border-2 border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-gray-800 text-foreground font-semibold rounded-xl border-2 border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 Become a Driver
                 <Car className="w-5 h-5" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 border-t border-gray-200 pt-8 sm:grid-cols-3 dark:border-gray-800">
+            <div className="grid grid-cols-1 gap-6 border-t border-border pt-8 sm:grid-cols-3 dark:border-gray-800">
               <div>
-                <div className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                <div className="text-sm font-semibold text-primary">
                   Live Tracking
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-sm text-muted-foreground">
                   Know exactly where your ride is
                 </div>
               </div>
               <div>
-                <div className="text-sm font-semibold text-teal-600 dark:text-teal-400">
+                <div className="text-sm font-semibold text-primary">
                   Transparent Fare
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-sm text-muted-foreground">
                   Clear pricing before you confirm
                 </div>
               </div>
               <div>
-                <div className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                <div className="text-sm font-semibold text-primary">
                   Safety First
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-sm text-muted-foreground">
                   Verified drivers and emergency support
                 </div>
               </div>
@@ -121,19 +121,19 @@ const HeroSection = () => {
           <div className="relative">
             <div className="relative mx-auto w-full max-w-md">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur-2xl opacity-20"></div>
-              <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 shadow-2xl border border-gray-300 dark:border-gray-700">
+              <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 shadow-2xl border border-border dark:border-gray-700">
                 <div className="bg-white dark:bg-gray-950 rounded-2xl p-6 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-500">Your Location</span>
-                    <Navigation className="w-4 h-4 text-emerald-500" />
+                    <span className="text-sm font-medium text-muted-foreground">Your Location</span>
+                    <Navigation className="w-4 h-4 text-primary" />
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg">
-                      <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
                       <input
                         type="text" 
                         placeholder="Pickup location"
-                        className="bg-transparent border-none outline-none text-gray-900 dark:text-white flex-1"
+                        className="bg-transparent border-none outline-none text-foreground flex-1"
                         readOnly
                       />
                     </div>
@@ -142,7 +142,7 @@ const HeroSection = () => {
                       <input
                         type="text" 
                         placeholder="Where to?"
-                        className="bg-transparent border-none outline-none text-gray-900 dark:text-white flex-1"
+                        className="bg-transparent border-none outline-none text-foreground flex-1"
                         readOnly
                       />
                     </div>
@@ -150,23 +150,23 @@ const HeroSection = () => {
                   <div className="pt-4">
                     <Link
                       to="/login"
-                      className="block w-full rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 py-3 text-center font-medium text-white transition-all hover:shadow-lg"
+                      className="block w-full rounded-lg bg-gradient-to-r brand-gradient-bg py-3 text-center font-medium text-primary-foreground transition-all hover:shadow-lg"
                     >
                       Find Ride
                     </Link>
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <div className="flex-1 text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                      <Car className="w-6 h-6 mx-auto mb-1 text-emerald-600" />
-                      <div className="text-xs text-gray-600 dark:text-gray-400">Economy</div>
+                    <div className="flex-1 text-center p-3 bg-muted dark:bg-gray-800 rounded-lg">
+                      <Car className="w-6 h-6 mx-auto mb-1 text-primary" />
+                      <div className="text-xs text-muted-foreground">Economy</div>
                     </div>
-                    <div className="flex-1 text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                    <div className="flex-1 text-center p-3 bg-muted dark:bg-gray-800 rounded-lg">
                       <Car className="w-6 h-6 mx-auto mb-1 text-teal-600" />
-                      <div className="text-xs text-gray-600 dark:text-gray-400">Comfort</div>
+                      <div className="text-xs text-muted-foreground">Comfort</div>
                     </div>
-                    <div className="flex-1 text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                      <Car className="w-6 h-6 mx-auto mb-1 text-emerald-600" />
-                      <div className="text-xs text-gray-600 dark:text-gray-400">Premium</div>
+                    <div className="flex-1 text-center p-3 bg-muted dark:bg-gray-800 rounded-lg">
+                      <Car className="w-6 h-6 mx-auto mb-1 text-primary" />
+                      <div className="text-xs text-muted-foreground">Premium</div>
                     </div>
                   </div>
                 </div>
@@ -212,10 +212,10 @@ const HowItWorks = () => {
     <section className="py-16 md:py-20 bg-white dark:bg-gray-950">
       <div className="section-shell">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             How It Works
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Getting around has never been easier. Just four simple steps to your destination.
           </p>
         </div>
@@ -224,13 +224,13 @@ const HowItWorks = () => {
           {steps.map((step, index) => (
             <div key={index} className="relative">
               <div className="text-center">
-                <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-r ${step.color} flex items-center justify-center text-white mb-4 shadow-lg`}>
+                <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-r ${step.color} flex items-center justify-center text-primary-foreground mb-4 shadow-lg`}>
                   {step.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-xl font-semibold text-foreground mb-2">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-muted-foreground">
                   {step.description}
                 </p>
               </div>
@@ -287,10 +287,10 @@ const Features = () => {
     <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-gray-900 dark:to-emerald-950/10">
       <div className="section-shell">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Powerful Features
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Experience seamless transportation with features designed for your comfort and safety.
           </p>
         </div>
@@ -299,15 +299,15 @@ const Features = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="group bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-xl"
+              className="group bg-card rounded-2xl p-6 border border-border hover:border-primary/40 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-xl"
             >
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-white mb-4`}>
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-primary-foreground mb-4`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary dark:group-hover:text-emerald-400 transition-colors">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground">
                 {feature.description}
               </p>
             </div>
@@ -354,10 +354,10 @@ const VehicleTypes = () => {
     <section className="py-16 md:py-20 bg-white dark:bg-gray-950">
       <div className="section-shell">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Choose Your Ride
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Select the perfect vehicle type for your journey and budget.
           </p>
         </div>
@@ -366,40 +366,40 @@ const VehicleTypes = () => {
           {vehicles.map((vehicle, index) => (
             <div 
               key={index}
-              className={`relative bg-white dark:bg-gray-900 rounded-2xl p-8 border-2 ${
+              className={`relative bg-card rounded-2xl p-8 border-2 ${
                 vehicle.popular 
                   ? "border-emerald-500 shadow-2xl lg:scale-105" 
-                  : 'border-gray-200 dark:border-gray-800'
+                  : 'border-border'
               } transition-all duration-300 hover:shadow-xl`}
             >
               {vehicle.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-semibold rounded-full">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r brand-gradient-bg text-primary-foreground text-sm font-semibold rounded-full">
                   Most Popular
                 </div>
               )}
 
-              <div className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-r ${vehicle.color} flex items-center justify-center text-white mb-6`}>
+              <div className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-r ${vehicle.color} flex items-center justify-center text-primary-foreground mb-6`}>
                 {vehicle.icon}
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">
+              <h3 className="text-2xl font-bold text-foreground text-center mb-2">
                 {vehicle.name}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
+              <p className="text-muted-foreground text-center mb-6">
                 {vehicle.description}
               </p>
 
               <div className="text-center mb-6">
-                <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                <div className="text-4xl font-bold text-foreground">
                   {vehicle.price}
                 </div>
-                <div className="text-sm text-gray-500">Starting fare</div>
+                <div className="text-sm text-muted-foreground">Starting fare</div>
               </div>
 
               <ul className="space-y-3 mb-8">
                 {vehicle.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  <li key={idx} className="flex items-center gap-2 text-muted-foreground">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -409,8 +409,8 @@ const VehicleTypes = () => {
                 to="/login"
                 className={`block w-full rounded-xl py-3 text-center font-semibold transition-all duration-300 ${
                   vehicle.popular
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:shadow-lg"
-                    : "bg-gray-100 text-gray-900 hover:bg-emerald-50 dark:bg-gray-800 dark:text-white dark:hover:bg-emerald-950/20"
+                    ? "bg-gradient-to-r brand-gradient-bg text-primary-foreground hover:shadow-lg"
+                    : "bg-muted text-foreground hover:bg-emerald-50 dark:bg-gray-800 dark:text-primary-foreground dark:hover:bg-emerald-950/20"
                 }`}
               >
                 Select {vehicle.name}
@@ -453,7 +453,7 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-600 to-teal-700 text-white">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-600 to-teal-700 text-primary-foreground">
       <div className="section-shell">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -488,17 +488,17 @@ const SafetyFirst = () => {
       <div className="section-shell">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-950/50 rounded-full border border-emerald-200 dark:border-emerald-800 mb-6">
-              <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full border border-primary/25 mb-6">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">
                 Your Safety Matters
               </span>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
               Ride with Confidence
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+            <p className="text-lg text-muted-foreground mb-8">
               Your safety is our top priority. We've built comprehensive safety features into every ride.
             </p>
 
@@ -512,7 +512,7 @@ const SafetyFirst = () => {
                 "Insurance coverage on every trip"
               ].map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-500 flex-shrink-0" />
+                  <CheckCircle2 className="w-6 h-6 text-primary flex-shrink-0" />
                   <span className="text-gray-700 dark:text-gray-300">{item}</span>
                 </div>
               ))}
@@ -521,7 +521,7 @@ const SafetyFirst = () => {
 
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur-3xl opacity-20"></div>
-            <div className="relative bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/50 dark:to-teal-950/30 rounded-3xl p-8 border border-emerald-200 dark:border-emerald-800">
+            <div className="relative bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/50 dark:to-teal-950/30 rounded-3xl p-8 border border-primary/25">
               <div className="grid grid-cols-2 gap-6">
                 {[
                   { icon: <Shield className="w-8 h-8" />, label: "Verified Drivers", value: "100%" },
@@ -529,14 +529,14 @@ const SafetyFirst = () => {
                   { icon: <Users className="w-8 h-8" />, label: "Safe Rides", value: "1M+" },
                   { icon: <Phone className="w-8 h-8" />, label: "Support", value: "24/7" }
                 ].map((stat, index) => (
-                  <div key={index} className="bg-white dark:bg-gray-900 rounded-2xl p-6 text-center">
-                    <div className="text-emerald-600 dark:text-emerald-400 mb-3 flex justify-center">
+                  <div key={index} className="bg-card rounded-2xl p-6 text-center">
+                    <div className="text-primary mb-3 flex justify-center">
                       {stat.icon}
                     </div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    <div className="text-2xl font-bold text-foreground mb-1">
                       {stat.value}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-muted-foreground">
                       {stat.label}
                     </div>
                   </div>
@@ -609,25 +609,25 @@ const Testimonials = () => {
     <section className="bg-gradient-to-br from-emerald-50/50 to-teal-50/50 py-16 dark:from-gray-900 dark:to-emerald-950/10 md:py-20">
       <div className="section-shell">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
             What Riders Say
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Real rider feedback from daily commuting, family travel, and business trips.
           </p>
         </div>
 
-        <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all dark:border-gray-800 dark:bg-gray-900 md:p-8">
+        <div className="mx-auto max-w-4xl rounded-2xl border border-border bg-white p-6 shadow-lg transition-all dark:border-gray-800 dark:bg-gray-900 md:p-8">
           <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 md:text-xl">
             "{activeItem.quote}"
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="font-semibold text-gray-900 dark:text-white">{activeItem.name}</p>
+              <p className="font-semibold text-foreground">{activeItem.name}</p>
               <p className="text-sm text-muted-foreground">{activeItem.role}</p>
             </div>
-            <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+            <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-primary dark:bg-emerald-900/40 dark:text-emerald-300">
               {activeItem.rating}
             </span>
           </div>
@@ -640,7 +640,7 @@ const Testimonials = () => {
                   type="button"
                   onClick={() => setActiveIndex(index)}
                   className={`h-2.5 w-2.5 rounded-full transition ${
-                    index === activeIndex ? "bg-emerald-600" : "bg-emerald-200 dark:bg-emerald-900"
+                    index === activeIndex ? "bg-primary" : "bg-emerald-200 dark:bg-emerald-900"
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
@@ -677,7 +677,7 @@ const DownloadApp = () => {
   return (
     <section className="py-16 md:py-20 bg-gradient-to-r from-emerald-600 to-teal-700">
       <div className="section-shell">
-        <div className="max-w-4xl mx-auto text-center text-white">
+        <div className="max-w-4xl mx-auto text-center text-primary-foreground">
           <Smartphone className="w-16 h-16 mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Download Our App Today
@@ -687,7 +687,7 @@ const DownloadApp = () => {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-emerald-600 transition-all duration-300 hover:bg-emerald-50">
+            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-primary transition-all duration-300 hover:bg-emerald-50">
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>
@@ -697,7 +697,7 @@ const DownloadApp = () => {
               </div>
             </Link>
 
-            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-emerald-600 transition-all duration-300 hover:bg-emerald-50">
+            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-primary transition-all duration-300 hover:bg-emerald-50">
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
               </svg>

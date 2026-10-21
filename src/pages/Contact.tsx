@@ -97,7 +97,7 @@ const Contact = ({
         <div className="mx-auto max-w-6xl">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="mb-4 text-3xl md:text-4xl font-bold tracking-tight lg:text-5xl bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
+            <h1 className="mb-4 text-3xl md:text-4xl font-bold tracking-tight lg:text-5xl brand-gradient-text">
               {title}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -115,7 +115,7 @@ const Contact = ({
                 <div className="space-y-4">
                   <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
                     <div className="flex-shrink-0 w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center">
-                      <Phone className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      <Phone className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                       <p className="font-medium">Phone Support</p>
@@ -125,7 +125,7 @@ const Contact = ({
 
                   <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
                     <div className="flex-shrink-0 w-12 h-12 bg-teal-100 dark:bg-teal-900/40 rounded-full flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                      <Mail className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                       <p className="font-medium">Email Support</p>
@@ -150,7 +150,7 @@ const Contact = ({
 
                   <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
                     <div className="flex-shrink-0 w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      <Clock className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                       <p className="font-medium">Support Hours</p>
@@ -161,16 +161,16 @@ const Contact = ({
               </div>
 
               {/* Quick Help Section */}
-              <div className="bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/40 dark:to-teal-950/30 p-6 rounded-xl border border-emerald-200 dark:border-emerald-800/50">
+              <div className="bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/40 dark:to-teal-950/30 p-6 rounded-xl border border-primary/25/50">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-emerald-500 dark:bg-emerald-600 rounded-full flex items-center justify-center">
-                    <Headphones className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 bg-primary dark:bg-primary rounded-full flex items-center justify-center">
+                    <Headphones className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <h4 className="font-semibold text-lg">Why Choose Our Support?</h4>
                 </div>
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                     24/7 Customer & Driver Support
                   </li>
                   <li className="flex items-center gap-2">
@@ -182,7 +182,7 @@ const Contact = ({
                     Multilingual Support Team
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                     In-App Live Chat Available
                   </li>
                 </ul>
@@ -314,7 +314,7 @@ const Contact = ({
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
+                    className="w-full bg-gradient-to-r brand-gradient-bg hover:opacity-95 text-primary-foreground"
                     size="lg"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Inquiry"}
