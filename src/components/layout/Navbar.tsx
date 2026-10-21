@@ -1,13 +1,13 @@
-import { Link, useNavigate } from "react-router";
-import { toast } from "sonner";
-import { role } from "@/constants/role";
-import {
-  authApi,
-  useLogoutMutation,
-  useUserInfoQuery,
-} from "@/redux/features/auth/auth.api";
-import { useAppDispatch } from "@/redux/hook";
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
+import { useAccount } from "@/hooks/useAccount";
+import { useLogoutSession } from "@/hooks/useLogoutSession";
+import {
+  DASHBOARD_PATH_BY_ROLE,
+  PROFILE_PATH_BY_ROLE,
+  SAFETY_PATH_BY_ROLE,
+  getPathByRole,
+} from "@/constants/paths";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -39,36 +39,20 @@ const publicLinks = [
   { href: "/faq", label: "FAQ" },
 ] as const;
 
-const dashboardHrefByRole: Record<string, string> = {
-  [role.superAdmin]: "/admin/dashboard",
-  [role.admin]: "/admin/dashboard",
-  [role.rider]: "/user/dashboard",
-  [role.driver]: "/driver/dashboard",
-};
-
-const profileHrefByRole: Record<string, string> = {
-  [role.superAdmin]: "/admin/dashboard/profile",
-  [role.admin]: "/admin/dashboard/profile",
-  [role.rider]: "/user/dashboard/profile",
-  [role.driver]: "/driver/dashboard/profile",
-};
-
-const safetyHrefByRole: Partial<Record<string, string>> = {
-  [role.rider]: "/user/dashboard/safety",
-  [role.driver]: "/driver/dashboard/safety",
-};
-
 export default function Navbar() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { data } = useUserInfoQuery(undefined);
-  const [logout] = useLogoutMutation();
+  const { user } = useAccount();
+  const logoutSession = useLogoutSession();
 
-  const user = data?.data;
   const userRole = user?.role as string | undefined;
-  const dashboardHref = userRole ? dashboardHrefByRole[userRole] : undefined;
-  const profileHref = userRole ? profileHrefByRole[userRole] : undefined;
-  const safetyHref = userRole ? safetyHrefByRole[userRole] : undefined;
+  const dashboardHref = userRole
+    ? getPathByRole(userRole, DASHBOARD_PATH_BY_ROLE)
+    : undefined;
+  const profileHref = userRole
+    ? getPathByRole(userRole, PROFILE_PATH_BY_ROLE)
+    : undefined;
+  const safetyHref = userRole
+    ? getPathByRole(userRole, SAFETY_PATH_BY_ROLE)
+    : undefined;
 
   const navLinks = dashboardHref
     ? [...publicLinks, { href: dashboardHref, label: "Dashboard" }]
@@ -77,14 +61,7 @@ export default function Navbar() {
   const userInitial = user?.name?.trim().charAt(0).toUpperCase() || "U";
 
   const handleLogout = async () => {
-    try {
-      await logout(undefined).unwrap();
-      dispatch(authApi.util.resetApiState());
-      toast.success("Logged out successfully.");
-      navigate("/", { replace: true });
-    } catch {
-      toast.error("Failed to logout. Please try again.");
-    }
+    await logoutSession();
   };
 
   return (

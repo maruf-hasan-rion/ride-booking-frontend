@@ -1,9 +1,26 @@
 import login from "@/assets/images/signIn.jpg";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 import Logo from "@/assets/icons/Logo";
 import { LoginForm } from "@/components/modules/Authentication/LoginForm";
+import { getRoleDashboardPath } from "@/hooks/useRoleRedirect";
+import { useAccount } from "@/hooks/useAccount";
 
 export default function Login() {
+  const { user, isLoading, isLoggedIn, hasRole, isBlockedOrSuspended } =
+    useAccount();
+
+  if (!isLoading && isLoggedIn) {
+    if (isBlockedOrSuspended) {
+      return <Navigate to="/blocked" replace />;
+    }
+
+    if (!hasRole) {
+      return <Navigate to="/select-role" replace />;
+    }
+
+    return <Navigate to={getRoleDashboardPath(user?.role)} replace />;
+  }
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -13,7 +30,7 @@ export default function Login() {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-sm">
             <LoginForm />
           </div>
         </div>

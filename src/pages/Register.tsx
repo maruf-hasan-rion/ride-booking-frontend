@@ -1,9 +1,26 @@
 import register from "@/assets/images/signUp.jpg";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 import Logo from "@/assets/icons/Logo";
 import { RegisterForm } from "@/components/modules/Authentication/RegisterForm";
+import { getRoleDashboardPath } from "@/hooks/useRoleRedirect";
+import { useAccount } from "@/hooks/useAccount";
 
 export default function Register() {
+  const { user, isLoading, isLoggedIn, hasRole, isBlockedOrSuspended } =
+    useAccount();
+
+  if (!isLoading && isLoggedIn) {
+    if (isBlockedOrSuspended) {
+      return <Navigate to="/blocked" replace />;
+    }
+
+    if (!hasRole) {
+      return <Navigate to="/select-role" replace />;
+    }
+
+    return <Navigate to={getRoleDashboardPath(user?.role)} replace />;
+  }
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden bg-muted lg:block">
@@ -20,7 +37,7 @@ export default function Register() {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-sm">
             <RegisterForm />
           </div>
         </div>

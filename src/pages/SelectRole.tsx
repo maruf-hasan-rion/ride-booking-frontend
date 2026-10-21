@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { role } from "@/constants/role";
 import { getRoleDashboardPath } from "@/hooks/useRoleRedirect";
+import { useAccount } from "@/hooks/useAccount";
+import { useToastAction } from "@/hooks/useToastAction";
 import { useAppDispatch } from "@/redux/hook";
 import {
   authApi,
   useLogoutMutation,
   useUpdateUserProfileMutation,
-  useUserInfoQuery,
 } from "@/redux/features/auth/auth.api";
-import { getApiErrorMessage } from "@/utils/apiResponse";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -39,17 +39,15 @@ export default function SelectRole() {
   const dispatch = useAppDispatch();
   const [selectedRole, setSelectedRole] = useState<RoleOption | null>(null);
 
-  const { data, isLoading } = useUserInfoQuery(undefined);
+  const {
+    user,
+    isLoading,
+    isLoggedIn: hasEmail,
+    isBlockedOrSuspended,
+  } = useAccount();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateUserProfileMutation();
   const [logout] = useLogoutMutation();
-
-  const user = data?.data;
-  const normalizedStatus =
-    typeof user?.status === "string" ? user.status.toLowerCase() : undefined;
-  const isBlockedOrSuspended =
-    user?.isBlocked === true ||
-    normalizedStatus === "blocked" ||
-    normalizedStatus === "suspended";
+  const runAction = useToastAction();
 
   useEffect(() => {
     if (isLoading || !user?.role) return;
@@ -67,25 +65,31 @@ export default function SelectRole() {
       return;
     }
 
-    try {
-      await updateProfile({
-        id: user._id,
-        data: { role: selectedRole },
-      }).unwrap();
+    const result = await runAction(
+      () =>
+        updateProfile({
+          id: user._id as string,
+          data: { role: selectedRole },
+        }).unwrap(),
+      {
+        success: "Role setup completed.",
+        fallback:
+          "Failed to complete role setup. Please login again.",
+      },
+    );
 
-      toast.success("Role setup completed.");
+    if (result) {
       navigate(getRoleDashboardPath(selectedRole), { replace: true });
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to complete role setup. Please login again."));
+      return;
+    }
 
-      try {
-        await logout(undefined).unwrap();
-      } catch {
-        // Best-effort logout
-      } finally {
-        dispatch(authApi.util.resetApiState());
-        navigate("/login", { replace: true });
-      }
+    try {
+      await logout(undefined).unwrap();
+    } catch {
+      // Best-effort logout
+    } finally {
+      dispatch(authApi.util.resetApiState());
+      navigate("/login", { replace: true });
     }
   };
 
@@ -93,7 +97,7 @@ export default function SelectRole() {
     return <RouteFallback />;
   }
 
-  if (!user?.email) {
+  if (!hasEmail) {
     return <Navigate to="/login" replace />;
   }
 
@@ -101,7 +105,7 @@ export default function SelectRole() {
     return <Navigate to="/blocked" replace />;
   }
 
-  if (user.role) {
+  if (user?.role) {
     return <Navigate to={getRoleDashboardPath(user.role)} replace />;
   }
 

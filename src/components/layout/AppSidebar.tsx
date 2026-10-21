@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Car, LogOut, User } from "lucide-react";
-import { toast } from "sonner";
 
 import {
   Sidebar,
@@ -18,47 +17,32 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { role } from "@/constants/role";
-import { getSidebarItems } from "@/utils/getSidebarItems";
 import {
-  authApi,
-  useLogoutMutation,
-  useUserInfoQuery,
-} from "@/redux/features/auth/auth.api";
+  PROFILE_PATH_BY_ROLE,
+  getPathByRole,
+} from "@/constants/paths";
+import { getSidebarItems } from "@/utils/getSidebarItems";
+import { useAccount } from "@/hooks/useAccount";
+import { useLogoutSession } from "@/hooks/useLogoutSession";
 
-import { Link, useNavigate } from "react-router";
-import { useAppDispatch } from "@/redux/hook";
+import { Link } from "react-router";
 
-const profilePathByRole: Record<string, string> = {
-  [role.superAdmin]: "/admin/dashboard/profile",
-  [role.admin]: "/admin/dashboard/profile",
-  [role.rider]: "/user/dashboard/profile",
-  [role.driver]: "/driver/dashboard/profile",
-};
+const profilePathByRole = PROFILE_PATH_BY_ROLE;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const navigate = useNavigate();
-  const { data: userData } = useUserInfoQuery(undefined);
-  const user = userData?.data;
+  const { user } = useAccount();
+  const logoutSession = useLogoutSession();
   const data = {
     navMain: getSidebarItems(user?.role),
   };
 
-  const dispatch = useAppDispatch();
-  const [logout] = useLogoutMutation();
-
-  const profilePath = profilePathByRole[user?.role || ""] || "/";
+  const profilePath = user?.role
+    ? getPathByRole(user.role, profilePathByRole)
+    : "/";
   const userInitial = user?.name?.trim().charAt(0).toUpperCase() || "U";
 
   const handleLogout = async () => {
-    try {
-      await logout(undefined).unwrap();
-      dispatch(authApi.util.resetApiState());
-      toast.success("Logged out successfully.");
-      navigate("/", { replace: true });
-    } catch {
-      toast.error("Failed to logout. Please try again.");
-    }
+    await logoutSession();
   };
 
   return (
