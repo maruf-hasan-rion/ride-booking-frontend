@@ -1,4 +1,4 @@
-// import { useState } from "react";
+import { useEffect, useState } from "react";
 import { 
   Car, 
   MapPin, 
@@ -11,7 +11,8 @@ import {
   Zap,
   TrendingUp,
   Award,
-//   ChevronRight,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle2,
   Phone,
   Smartphone,
@@ -21,7 +22,7 @@ import { Link } from "react-router";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       <HeroSection />
       <HowItWorks />
       <Features />
@@ -37,14 +38,14 @@ const Home = () => {
 // Hero Section
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 dark:from-gray-900 dark:via-emerald-950/20 dark:to-gray-900 py-20 md:py-32">
+    <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 py-16 sm:py-20 md:py-24 lg:py-28 dark:from-gray-900 dark:via-emerald-950/20 dark:to-gray-900">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="section-shell relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
@@ -70,32 +71,50 @@ const HeroSection = () => {
               Your trusted transportation partner for every journey.
             </p>
 
-            <div className="flex flex-wrap gap-4">
-             <Link to="/login"> <button className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+              <Link
+                to="/login"
+                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+              >
                 Book a Ride
                 <ArrowRight className="w-5 h-5" />
-              </button></Link>
-             <Link to="/login"> <button className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-xl border-2 border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 flex items-center gap-2">
+              </Link>
+              <Link
+                to="/login"
+                className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-xl border-2 border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 flex items-center justify-center gap-2"
+              >
                 Become a Driver
                 <Car className="w-5 h-5" />
-              </button></Link>
+              </Link>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200 dark:border-gray-800">
+            <div className="grid grid-cols-1 gap-6 border-t border-gray-200 pt-8 sm:grid-cols-3 dark:border-gray-800">
               <div>
-                <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">50K+</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Active Riders</div>
+                <div className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                  Live Tracking
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Know exactly where your ride is
+                </div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">5K+</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Drivers</div>
+                <div className="text-sm font-semibold text-teal-600 dark:text-teal-400">
+                  Transparent Fare
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Clear pricing before you confirm
+                </div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-green-600 dark:text-green-400">4.9★</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Rating</div>
+                <div className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                  Safety First
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Verified drivers and emergency support
+                </div>
               </div>
             </div>
+
           </div>
 
           {/* Right Content - Mock Phone */}
@@ -111,27 +130,30 @@ const HeroSection = () => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg">
                       <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                      <input 
+                      <input
                         type="text" 
                         placeholder="Pickup location"
                         className="bg-transparent border-none outline-none text-gray-900 dark:text-white flex-1"
-                        defaultValue="Mirpur 10, Dhaka"
+                        readOnly
                       />
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-950/30 rounded-lg">
                       <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <input 
+                      <input
                         type="text" 
                         placeholder="Where to?"
                         className="bg-transparent border-none outline-none text-gray-900 dark:text-white flex-1"
-                        defaultValue="Dhanmondi 27"
+                        readOnly
                       />
                     </div>
                   </div>
                   <div className="pt-4">
-                    <button className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium rounded-lg hover:shadow-lg transition-all">
+                    <Link
+                      to="/login"
+                      className="block w-full rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 py-3 text-center font-medium text-white transition-all hover:shadow-lg"
+                    >
                       Find Ride
-                    </button>
+                    </Link>
                   </div>
                   <div className="flex gap-2 pt-2">
                     <div className="flex-1 text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
@@ -143,7 +165,7 @@ const HeroSection = () => {
                       <div className="text-xs text-gray-600 dark:text-gray-400">Comfort</div>
                     </div>
                     <div className="flex-1 text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                      <Car className="w-6 h-6 mx-auto mb-1 text-purple-600" />
+                      <Car className="w-6 h-6 mx-auto mb-1 text-emerald-600" />
                       <div className="text-xs text-gray-600 dark:text-gray-400">Premium</div>
                     </div>
                   </div>
@@ -187,8 +209,8 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-20 bg-white dark:bg-gray-950">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 bg-white dark:bg-gray-950">
+      <div className="section-shell">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             How It Works
@@ -205,7 +227,6 @@ const HowItWorks = () => {
                 <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-r ${step.color} flex items-center justify-center text-white mb-4 shadow-lg`}>
                   {step.icon}
                 </div>
-                <div className="absolute top-8 left-1/2 w-full h-0.5 bg-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-900 dark:to-teal-900 -z-10 hidden lg:block last:hidden"></div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   {step.title}
                 </h3>
@@ -263,8 +284,8 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-gray-900 dark:to-emerald-950/10">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-gray-900 dark:to-emerald-950/10">
+      <div className="section-shell">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Powerful Features
@@ -303,7 +324,7 @@ const VehicleTypes = () => {
     {
       name: "Economy",
       description: "Budget-friendly rides for everyday travel",
-      price: "৳50",
+      price: "BDT 50+",
       features: ["Affordable rates", "Comfortable sedans", "4 seats", "AC included"],
       icon: <Car className="w-12 h-12" />,
       color: "from-emerald-500 to-emerald-600",
@@ -312,7 +333,7 @@ const VehicleTypes = () => {
     {
       name: "Comfort",
       description: "Premium sedans for a better experience",
-      price: "৳80",
+      price: "BDT 80+",
       features: ["Mid-range pricing", "Premium vehicles", "4 seats", "Extra legroom"],
       icon: <Car className="w-12 h-12" />,
       color: "from-teal-500 to-teal-600",
@@ -321,17 +342,17 @@ const VehicleTypes = () => {
     {
       name: "Premium",
       description: "Luxury vehicles for special occasions",
-      price: "৳150",
+      price: "BDT 150+",
       features: ["Top-tier comfort", "Luxury cars", "4 seats", "Professional drivers"],
       icon: <Car className="w-12 h-12" />,
-      color: "from-purple-500 to-purple-600",
+      color: "from-emerald-600 to-teal-600",
       popular: false
     }
   ];
 
   return (
-    <section className="py-20 bg-white dark:bg-gray-950">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 bg-white dark:bg-gray-950">
+      <div className="section-shell">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Choose Your Ride
@@ -347,7 +368,7 @@ const VehicleTypes = () => {
               key={index}
               className={`relative bg-white dark:bg-gray-900 rounded-2xl p-8 border-2 ${
                 vehicle.popular 
-                  ? 'border-emerald-500 shadow-2xl scale-105' 
+                  ? "border-emerald-500 shadow-2xl lg:scale-105" 
                   : 'border-gray-200 dark:border-gray-800'
               } transition-all duration-300 hover:shadow-xl`}
             >
@@ -384,13 +405,16 @@ const VehicleTypes = () => {
                 ))}
               </ul>
 
-              <button className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
-                vehicle.popular
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:shadow-lg'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-emerald-50 dark:hover:bg-emerald-950/20'
-              }`}>
+              <Link
+                to="/login"
+                className={`block w-full rounded-xl py-3 text-center font-semibold transition-all duration-300 ${
+                  vehicle.popular
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:shadow-lg"
+                    : "bg-gray-100 text-gray-900 hover:bg-emerald-50 dark:bg-gray-800 dark:text-white dark:hover:bg-emerald-950/20"
+                }`}
+              >
                 Select {vehicle.name}
-              </button>
+              </Link>
             </div>
           ))}
         </div>
@@ -424,13 +448,13 @@ const WhyChooseUs = () => {
       icon: <Award className="w-8 h-8" />,
       title: "Top Rated",
       description: "Consistently high ratings from riders",
-      stat: "4.9★ Rating"
+      stat: "Top Rated Service"
     }
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-emerald-600 to-teal-700 text-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-600 to-teal-700 text-white">
+      <div className="section-shell">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Why Riders Choose Us
@@ -460,8 +484,8 @@ const WhyChooseUs = () => {
 // Safety First
 const SafetyFirst = () => {
   return (
-    <section className="py-20 bg-white dark:bg-gray-950">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 bg-white dark:bg-gray-950">
+      <div className="section-shell">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-950/50 rounded-full border border-emerald-200 dark:border-emerald-800 mb-6">
@@ -526,75 +550,122 @@ const SafetyFirst = () => {
   );
 };
 
-// Testimonials
+// Rider Story Carousel
 const Testimonials = () => {
   const testimonials = [
     {
-      name: "Anika Rahman",
-      role: "Daily Commuter",
-      avatar: "AR",
-      rating: 5,
-      text: "Best ride-sharing app in Dhaka! Drivers are always professional and the app is super easy to use."
+      quote:
+        "I book two rides daily for office commute. Pickup time is usually under 5 minutes, and fare estimates stay accurate.",
+      name: "Nusrat Ahmed",
+      role: "Daily Rider, Dhaka",
+      rating: "4.9/5",
     },
     {
-      name: "Mehedi Hasan",
-      role: "Business Professional",
-      avatar: "MH",
-      rating: 5,
-      text: "I use this for my daily office commute. Always on time, great prices, and excellent service."
+      quote:
+        "Driver details, vehicle info, and live tracking make late-night rides feel safe and transparent for my family.",
+      name: "Sabbir Hasan",
+      role: "University Rider",
+      rating: "4.8/5",
     },
     {
-      name: "Fatima Akter",
-      role: "University Student",
-      avatar: "FA",
-      rating: 5,
-      text: "As a student, I love the affordable prices and safety features. Feel secure even traveling late at night."
-    }
+      quote:
+        "I switched from random street pickups to GoMove for reliability. Trip history and receipts are very useful.",
+      name: "Rafiul Karim",
+      role: "Frequent Business Rider",
+      rating: "4.9/5",
+    },
+    {
+      quote:
+        "The app has clean UX. I can request, track, and share trip details without confusion, even on mobile data.",
+      name: "Mitu Chowdhury",
+      role: "Occasional Rider",
+      rating: "4.7/5",
+    },
   ];
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((previous) => (previous + 1) % testimonials.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [testimonials.length]);
+
+  const goToPrevious = () => {
+    setActiveIndex((previous) =>
+      previous === 0 ? testimonials.length - 1 : previous - 1
+    );
+  };
+
+  const goToNext = () => {
+    setActiveIndex((previous) => (previous + 1) % testimonials.length);
+  };
+
+  const activeItem = testimonials[activeIndex];
+
   return (
-    <section className="py-20 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-gray-900 dark:to-emerald-950/10">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            What Our Riders Say
+    <section className="bg-gradient-to-br from-emerald-50/50 to-teal-50/50 py-16 dark:from-gray-900 dark:to-emerald-950/10 md:py-20">
+      <div className="section-shell">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white md:text-4xl">
+            What Riders Say
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what our community has to say.
+          <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+            Real rider feedback from daily commuting, family travel, and business trips.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {testimonials.map((testimonial, index) => (
-            <div 
-              key={index}
-              className="bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-800 hover:shadow-xl transition-all duration-300"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-semibold">
-                  {testimonial.avatar}
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    {testimonial.name}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    {testimonial.role}
-                  </div>
-                </div>
-              </div>
+        <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all dark:border-gray-800 dark:bg-gray-900 md:p-8">
+          <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 md:text-xl">
+            "{activeItem.quote}"
+          </p>
 
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-
-              <p className="text-gray-600 dark:text-gray-400">
-                "{testimonial.text}"
-              </p>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white">{activeItem.name}</p>
+              <p className="text-sm text-muted-foreground">{activeItem.role}</p>
             </div>
-          ))}
+            <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+              {activeItem.rating}
+            </span>
+          </div>
+
+          <div className="mt-6 flex items-center justify-between">
+            <div className="flex gap-2">
+              {testimonials.map((item, index) => (
+                <button
+                  key={item.name}
+                  type="button"
+                  onClick={() => setActiveIndex(index)}
+                  className={`h-2.5 w-2.5 rounded-full transition ${
+                    index === activeIndex ? "bg-emerald-600" : "bg-emerald-200 dark:bg-emerald-900"
+                  }`}
+                  aria-label={`Go to testimonial ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={goToPrevious}
+                className="rounded-md border p-2 text-muted-foreground transition hover:text-foreground"
+                aria-label="Previous testimonial"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={goToNext}
+                className="rounded-md border p-2 text-muted-foreground transition hover:text-foreground"
+                aria-label="Next testimonial"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -604,8 +675,8 @@ const Testimonials = () => {
 // Download App
 const DownloadApp = () => {
   return (
-    <section className="py-20 bg-gradient-to-r from-emerald-600 to-teal-700">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 bg-gradient-to-r from-emerald-600 to-teal-700">
+      <div className="section-shell">
         <div className="max-w-4xl mx-auto text-center text-white">
           <Smartphone className="w-16 h-16 mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -616,7 +687,7 @@ const DownloadApp = () => {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-8 py-4 bg-white text-emerald-600 font-semibold rounded-xl hover:bg-emerald-50 transition-all duration-300 flex items-center gap-3">
+            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-emerald-600 transition-all duration-300 hover:bg-emerald-50">
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>
@@ -624,9 +695,9 @@ const DownloadApp = () => {
                 <div className="text-xs">Download on the</div>
                 <div className="text-sm font-bold">App Store</div>
               </div>
-            </button>
+            </Link>
 
-            <button className="px-8 py-4 bg-white text-emerald-600 font-semibold rounded-xl hover:bg-emerald-50 transition-all duration-300 flex items-center gap-3">
+            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-emerald-600 transition-all duration-300 hover:bg-emerald-50">
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
               </svg>
@@ -634,7 +705,7 @@ const DownloadApp = () => {
                 <div className="text-xs">Get it on</div>
                 <div className="text-sm font-bold">Google Play</div>
               </div>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, MapPin, Phone, Headphones, Clock, Shield } from "lucide-react";
+import { Mail, MapPin, Phone, Headphones, Clock, Shield } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -39,7 +39,7 @@ const Contact = ({
   title = "Need Help? We're Here for You",
   description = "Whether you're a rider or driver, our support team is ready to assist you 24/7. Get in touch and we'll respond promptly.",
   phone = "+880 1234-567890",
-  email = "support@rideapp.com",
+  email = "support@gomove.app",
   supportHours = "24/7 Available",
 }: ContactProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,22 +56,36 @@ const Contact = ({
     },
   });
 
-  const onSubmit = async () => {
+  const submitInquiry = async (payload: ContactFormValues) => {
+    await new Promise((resolve) => setTimeout(resolve, 900));
+
+    if (!navigator.onLine) {
+      throw new Error("No internet connection. Please check your network and retry.");
+    }
+
+    return {
+      ticketId: `INQ-${Date.now().toString().slice(-6)}`,
+      responseWindow: /safety|urgent|emergency/i.test(payload.subject)
+        ? "within 2 hours"
+        : "within 24 hours",
+    };
+  };
+
+  const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
-
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const submission = await submitInquiry(data);
 
-      toast.success("Message sent successfully!", {
-        description: "Our support team will get back to you within 24 hours.",
+      toast.success("Inquiry submitted successfully.", {
+        description: `Reference ${submission.ticketId} created. Our support team will reply ${submission.responseWindow}.`,
       });
-
       form.reset();
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to send message", {
-        description: "Please try again later or call our support line.",
-      });
+      const message =
+        error instanceof Error
+          ? error.message
+          : "We could not submit your inquiry. Please try again.";
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -195,8 +209,8 @@ const Contact = ({
               </h3>
 
               <Form {...form}>
-                <div onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="firstName"
@@ -299,21 +313,13 @@ const Contact = ({
 
                   <Button
                     type="submit"
-                    onClick={form.handleSubmit(onSubmit)}
-                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
                     disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
                     size="lg"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Sending...
-                      </>
-                    ) : (
-                      "Send Message"
-                    )}
+                    {isSubmitting ? "Submitting..." : "Submit Inquiry"}
                   </Button>
-                </div>
+                </form>
               </Form>
             </div>
           </div>
