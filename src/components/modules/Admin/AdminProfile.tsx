@@ -1,109 +1,143 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangePasswordForm } from "@/pages/Profile";
-import React, { useEffect, useState } from "react";
-import {
-  useUserInfoQuery,
-  useUpdateUserProfileMutation,
-} from "@/redux/features/auth/auth.api";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import Loader from "@/assets/icons/loader/Loader";
+import { ChangePasswordCard } from "@/components/shared/account/ChangePasswordCard";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  useUpdateUserProfileMutation,
+  useUserInfoQuery,
+} from "@/redux/features/auth/auth.api";
+import { getApiErrorMessage } from "@/utils/apiResponse";
+import { validateName, validatePhone } from "@/utils/formValidation";
+
+type AdminProfileFormState = {
+  name: string;
+  contactNo: string;
+  email: string;
+};
+
+const INITIAL_PROFILE_STATE: AdminProfileFormState = {
+  name: "",
+  contactNo: "",
+  email: "",
+};
 
 export const AdminProfile = () => {
-  const { data, isLoading: isProfileLoading } = useUserInfoQuery(undefined);
-  const [formData, setFormData] = useState({
-    name: "",
-    contactNo: "",
-  });
-  const [updateProfile, { isLoading }] = useUpdateUserProfileMutation();
+  const [profile, setProfile] = useState<AdminProfileFormState>(INITIAL_PROFILE_STATE);
+
+  const { data: userResponse, isLoading: isUserLoading } = useUserInfoQuery(undefined);
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateUserProfileMutation();
 
   useEffect(() => {
-    if (data?.data) {
-      setFormData({
-        name: data.data.name || "",
-        contactNo: data.data.contactNo || "",
-      });
-    }
-  }, [data]);
+    const user = userResponse?.data;
+    if (!user) return;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setProfile({
+      name: user.name || "",
+      contactNo: user.contactNo || "",
+      email: user.email || "",
+    });
+  }, [userResponse]);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setProfile((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const userId = userResponse?.data?._id;
+    if (!userId) {
+      toast.error("Admin profile not found.");
+      return;
+    }
+
+    const nameError = validateName(profile.name);
+    if (nameError) {
+      toast.error(nameError);
+      return;
+    }
+
+    const phoneError = validatePhone(profile.contactNo);
+    if (phoneError) {
+      toast.error(phoneError);
+      return;
+    }
+
     try {
       await updateProfile({
-        id: data?.data._id as string,
-        data: formData,
+        id: userId,
+        data: {
+          name: profile.name,
+          contactNo: profile.contactNo,
+        },
       }).unwrap();
-      toast.success("Profile updated successfully!");
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update profile.");
+      toast.success("Profile updated successfully.");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to update profile."));
     }
   };
 
-  if (isProfileLoading) {
-    <Loader />;
+  if (isUserLoading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Admin Profile</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your administrator account settings
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Profile Information */}
+    <div className="container mx-auto max-w-5xl space-y-6 p-4 md:p-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Update your administrator details
-            </p>
+            <CardTitle>Admin Profile</CardTitle>
+            <CardDescription>Update your account information.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
                   name="name"
-                  type="text"
-                  value={formData.name}
+                  value={profile.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contactNo">Contact Number</Label>
+                <Label htmlFor="contactNo">Phone Number</Label>
                 <Input
                   id="contactNo"
                   name="contactNo"
-                  type="text"
-                  value={formData.contactNo}
+                  value={profile.contactNo}
                   onChange={handleChange}
                   placeholder="Enter your contact number"
                 />
               </div>
 
-              <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? "Updating..." : "Update Profile"}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" value={profile.email} disabled />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isUpdating}>
+                {isUpdating ? "Updating..." : "Update Profile"}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Change Password */}
-        <ChangePasswordForm />
+        <ChangePasswordCard />
       </div>
     </div>
   );

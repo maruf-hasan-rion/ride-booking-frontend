@@ -1,23 +1,26 @@
 import { axiosInstance } from "@/lib/axios";
 import type { BaseQueryFn } from "@reduxjs/toolkit/query";
-import { AxiosError, type AxiosRequestConfig } from "axios";
+import { isAxiosError, type AxiosRequestConfig } from "axios";
+
+type AxiosBaseQueryArgs = {
+  url: string;
+  method?: AxiosRequestConfig["method"];
+  data?: AxiosRequestConfig["data"];
+  params?: AxiosRequestConfig["params"];
+  headers?: AxiosRequestConfig["headers"];
+};
+
+type AxiosBaseQueryError = {
+  status?: number;
+  data: unknown;
+};
 
 const axiosBaseQuery =
-  (): BaseQueryFn<
-    {
-      url: string;
-      method?: AxiosRequestConfig["method"];
-      data?: AxiosRequestConfig["data"];
-      params?: AxiosRequestConfig["params"];
-      headers?: AxiosRequestConfig["headers"];
-    },
-    unknown,
-    unknown
-  > =>
+  (): BaseQueryFn<AxiosBaseQueryArgs, unknown, AxiosBaseQueryError> =>
   async ({ url, method, data, params, headers }) => {
     try {
       const result = await axiosInstance({
-        url: url,
+        url,
         method,
         data,
         params,
@@ -25,11 +28,18 @@ const axiosBaseQuery =
       });
       return { data: result.data };
     } catch (axiosError) {
-      const err = axiosError as AxiosError;
+      if (!isAxiosError(axiosError)) {
+        return {
+          error: {
+            data: (axiosError as Error)?.message || "Unexpected error",
+          },
+        };
+      }
+
       return {
         error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
+          status: axiosError.response?.status,
+          data: axiosError.response?.data || axiosError.message,
         },
       };
     }

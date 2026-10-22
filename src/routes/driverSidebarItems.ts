@@ -1,40 +1,54 @@
-// import EarningsDashboard from "@/pages/driver/EarningsDashboard";
-// import ManageRides from "@/pages/driver/ManageRides";
-import Profile from "@/pages/Profile";
 import type { ISidebarItem } from "@/types";
-// import { lazy } from "react";
+import { Activity, Calendar, History, User, ShieldAlert } from "lucide-react";
+import { lazy } from "react";
 
-// const RideHistory = lazy(() => import("@/pages/driver/RideHistory"));
+const DriverProfile = lazy(() => import("@/pages/Driver/DriverProfile"));
+const Overview = lazy(() => import("@/pages/Driver/Overview"));
+const RideHistory = lazy(() => import("@/pages/Driver/RideHistory"));
+const RideRequest = lazy(() => import("@/pages/Driver/RideRequest"));
+const SafetySettings = lazy(() => import("@/pages/Driver/SafetySettings"));
 
 export const driverSidebarItems: ISidebarItem[] = [
   {
-    title: "Dashboard",
+    title: "Main Menu",
     items: [
       {
-        title: "Update Profile",
-        url: "/driver/profile",
-        component: Profile,
+        title: "Overview",
+        url: "/driver/dashboard",
+        icon: Activity,
+        component: Overview,
+      },
+      {
+        title: "Incoming Requests",
+        url: "/driver/dashboard/ride-request",
+        icon: Calendar,
+        component: RideRequest,
+      },
+
+      {
+        title: "Ride History",
+        url: "/driver/dashboard/history",
+        icon: History,
+        component: RideHistory,
       },
     ],
   },
-  //   {
-  //     title: "Driver Management",
-  //     items: [
-  //       {
-  //         title: "Manage Rides",
-  //         url: "/driver/manage-rides",
-  //         component: ManageRides,
-  //       },
-  //       {
-  //         title: "Ride History",
-  //         url: "/driver/ride-history",
-  //         component: RideHistory,
-  //       },
-  //       {
-  //         title: "Earnings",
-  //         url: "/driver/earnings",
-  //         component: EarningsDashboard,
-  //       },
-  //     ],
-  //   },
+
+  {
+    title: "Account",
+    items: [
+      {
+        title: "Profile",
+        url: "/driver/dashboard/profile",
+        icon: User,
+        component: DriverProfile,
+      },
+      {
+        title: "Safety Settings",
+        url: "/driver/dashboard/safety",
+        icon: ShieldAlert,
+        component: SafetySettings,
+      },
+    ],
+  },
 ];

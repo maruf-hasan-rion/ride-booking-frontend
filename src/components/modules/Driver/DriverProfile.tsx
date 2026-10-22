@@ -1,127 +1,194 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
-import {
-  useUserInfoQuery,
-  useUpdateUserProfileMutation,
-} from "@/redux/features/auth/auth.api";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { ChangePasswordCard } from "@/components/shared/account/ChangePasswordCard";
+import { StatusBadge } from "@/components/shared/dashboard/StatusBadge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ChangePasswordForm } from "@/pages/Profile";
+  useUserInfoQuery,
+  useUpdateUserProfileMutation,
+} from "@/redux/features/auth/auth.api";
+import {
+  useCreateDriverProfileMutation,
+  useGetDriverProfileQuery,
+  useUpdateDriverProfileMutation,
+} from "@/redux/features/driver/driver.api";
+import { extractData, getApiErrorMessage } from "@/utils/apiResponse";
+import { validateName, validatePhone, validateVehicleInfo } from "@/utils/formValidation";
+
+type DriverProfileState = {
+  isOnline?: boolean;
+  isApproved?: boolean;
+  vehicleInfo?: string;
+};
+
+type UserProfileForm = {
+  name: string;
+  contactNo: string;
+  email: string;
+};
+
+const INITIAL_FORM: UserProfileForm = {
+  name: "",
+  contactNo: "",
+  email: "",
+};
 
 export const DriverProfile = () => {
-  const { data, isLoading: isProfileLoading } = useUserInfoQuery(undefined);
-  const [formData, setFormData] = useState({
-    name: "",
-    vehicleType: "",
-    contactNo: "",
-  });
+  const { data: userResponse, isLoading: isUserLoading } = useUserInfoQuery(undefined);
+  const { data: driverResponse, isLoading: isDriverLoading } = useGetDriverProfileQuery(undefined);
 
-  const [updateProfile, { isLoading: isUpdating }] =
-    useUpdateUserProfileMutation();
+  const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateUserProfileMutation();
+  const [createDriverProfile, { isLoading: isCreatingDriverProfile }] =
+    useCreateDriverProfileMutation();
+  const [updateDriverProfile, { isLoading: isUpdatingDriverProfile }] =
+    useUpdateDriverProfileMutation();
+
+  const [profileForm, setProfileForm] = useState<UserProfileForm>(INITIAL_FORM);
+  const [vehicleInfoInput, setVehicleInfoInput] = useState("");
+
+  const user = userResponse?.data;
+  const driverProfile = extractData<DriverProfileState>(driverResponse);
 
   useEffect(() => {
-    if (data?.data) {
-      setFormData({
-        name: data.data.name || "",
-        vehicleType: data.data.vehicleType || "",
-        contactNo: data.data.contactNo || "",
-      });
+    if (!user) return;
+
+    setProfileForm({
+      name: user.name || "",
+      contactNo: user.contactNo || "",
+      email: user.email || "",
+    });
+  }, [user]);
+
+  useEffect(() => {
+    setVehicleInfoInput(driverProfile?.vehicleInfo || "");
+  }, [driverProfile?.vehicleInfo]);
+
+  const handleProfileInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setProfileForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  const handleProfileSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const userId = user?._id;
+    if (!userId) {
+      toast.error("User profile not found.");
+      return;
     }
-  }, [data]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const nameError = validateName(profileForm.name);
+    if (nameError) {
+      toast.error(nameError);
+      return;
+    }
 
-  const handleSelectChange = (value: string) => {
-    setFormData({ ...formData, vehicleType: value });
-  };
+    const phoneError = validatePhone(profileForm.contactNo);
+    if (phoneError) {
+      toast.error(phoneError);
+      return;
+    }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     try {
-      if (!data?.data?._id) {
-        toast.error("User ID not found.");
-        return;
-      }
       await updateProfile({
-        id: data.data._id,
-        data: formData,
+        id: userId,
+        data: {
+          name: profileForm.name,
+          contactNo: profileForm.contactNo,
+        },
       }).unwrap();
-      toast.success("Profile updated successfully!");
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update profile.");
+
+      toast.success("Profile updated successfully.");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to update profile."));
     }
   };
 
-  if (isProfileLoading) {
+  const handleVehicleProfileSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const validationError = validateVehicleInfo(vehicleInfoInput);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
+    try {
+      const payload = vehicleInfoInput.trim();
+
+      if (hasDriverProfile) {
+        await updateDriverProfile(payload).unwrap();
+        toast.success("Vehicle details updated successfully.");
+      } else {
+        await createDriverProfile(payload).unwrap();
+        toast.success("Vehicle details saved successfully.");
+      }
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to save vehicle details."));
+    }
+  };
+
+  if (isUserLoading || isDriverLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-8 h-8 border-2 border-muted border-t-foreground rounded-full animate-spin"></div>
-          <p className="text-muted-foreground">Loading profile...</p>
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+          <p className="text-sm text-muted-foreground">Loading profile...</p>
         </div>
       </div>
     );
   }
 
+  const hasDriverProfile = Boolean(driverProfile);
+  const accountStatus =
+    typeof user?.status === "string" && user.status.trim()
+      ? user.status
+      : hasDriverProfile
+        ? driverProfile?.isApproved
+          ? "ACTIVE"
+          : "PENDING"
+        : "PENDING";
+
   return (
-    <div className="container mx-auto p-6 max-w-4xl space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Driver Profile</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your driver account and vehicle information
-        </p>
+    <div className="container mx-auto max-w-5xl space-y-6 p-4 md:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Driver Profile</h1>
+          <p className="text-sm text-muted-foreground">
+            Manage your contact information, vehicle profile, and account security.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <StatusBadge status={accountStatus} />
+          <StatusBadge
+            status={hasDriverProfile ? (driverProfile?.isOnline ? "ONLINE" : "OFFLINE") : "N/A"}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Profile Information */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Update your personal and vehicle details
-            </p>
+            <CardTitle>Personal Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
                   name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
+                  value={profileForm.name}
+                  onChange={handleProfileInput}
                   placeholder="Enter your full name"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="vehicleType">Vehicle Type</Label>
-                <Select
-                  onValueChange={handleSelectChange}
-                  value={formData?.vehicleType}
-                >
-                  <SelectTrigger id="vehicleType">
-                    <SelectValue placeholder="Select your vehicle type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="car">Car</SelectItem>
-                    <SelectItem value="bike">Bike</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">
@@ -129,23 +196,61 @@ export const DriverProfile = () => {
                 <Input
                   id="contactNo"
                   name="contactNo"
-                  type="text"
-                  value={formData.contactNo}
-                  onChange={handleChange}
+                  value={profileForm.contactNo}
+                  onChange={handleProfileInput}
                   placeholder="Enter your contact number"
                 />
               </div>
 
-              <Button type="submit" disabled={isUpdating} className="w-full">
-                {isUpdating ? "Updating..." : "Update Profile"}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" value={profileForm.email} disabled />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isUpdatingProfile}>
+                {isUpdatingProfile ? "Updating..." : "Update Profile"}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Change Password */}
-        <ChangePasswordForm />
+        <Card>
+          <CardHeader>
+            <CardTitle>Vehicle Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleVehicleProfileSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="vehicleInfo">Vehicle Info</Label>
+                <Textarea
+                  id="vehicleInfo"
+                  value={vehicleInfoInput}
+                  onChange={(event) => setVehicleInfoInput(event.target.value)}
+                  placeholder="Example: Toyota Axio, White, DHAKA METRO-11-2233"
+                  rows={4}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Include your vehicle model, color, and registration number in one clear line.
+                </p>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isCreatingDriverProfile || isUpdatingDriverProfile}
+              >
+                {isCreatingDriverProfile || isUpdatingDriverProfile
+                  ? "Saving..."
+                  : hasDriverProfile
+                    ? "Update Vehicle Details"
+                    : "Save Vehicle Details"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
+
+      <ChangePasswordCard />
     </div>
   );
 };

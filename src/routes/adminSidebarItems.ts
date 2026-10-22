@@ -1,29 +1,44 @@
-import GetAllRides from "@/pages/Admin/GetAllRides";
 import type { ISidebarItem } from "@/types";
+import { Activity, CarTaxiFront, ShieldCheck, User } from "lucide-react";
 import { lazy } from "react";
 
-const Stats = lazy(() => import("@/pages/Admin/Stats"));
+const Analytics = lazy(() => import("@/pages/Admin/Analytics"));
+const RideOversight = lazy(() => import("@/pages/Admin/RideOversight"));
+const UserManagement = lazy(() => import("@/pages/Admin/UserManagement"));
+const AdminProfile = lazy(() => import("@/pages/Admin/Profile"));
 
 export const adminSidebarItems: ISidebarItem[] = [
   {
-    title: "Dashboard",
+    title: "Main Menu",
     items: [
       {
-        title: "Stats",
-        url: "/admin/stats",
-        component: Stats,
-        isActive: undefined,
+        title: "Analytics",
+        url: "/admin/dashboard",
+        icon: Activity,
+        component: Analytics,
+      },
+      {
+        title: "Ride Oversight",
+        url: "/admin/dashboard/ride-oversight",
+        icon: CarTaxiFront,
+        component: RideOversight,
+      },
+      {
+        title: "User Management",
+        url: "/admin/dashboard/user-management",
+        icon: ShieldCheck,
+        component: UserManagement,
       },
     ],
   },
   {
-    title: "Ride Management",
+    title: "Account",
     items: [
       {
-        title: "Get All Rides",
-        url: "/admin/get-all-rides",
-        component: GetAllRides,
-        isActive: undefined,
+        title: "Profile",
+        url: "/admin/dashboard/profile",
+        icon: User,
+        component: AdminProfile,
       },
     ],
   },

@@ -1,5 +1,7 @@
 import { baseApi } from "@/redux/baseApi";
 
+type QueryParams = Record<string, string | number | boolean | undefined>;
+
 export const rideApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     rideRequest: builder.mutation({
@@ -15,9 +17,23 @@ export const rideApi = baseApi.injectEndpoints({
         url: `/ride/cancel/${rideId}`,
         method: "PATCH",
       }),
+      invalidatesTags: ["RIDE"],
     }),
-
-    // requestRide: build.mutation<any, { pickup: string; destination: string; paymentMethod: 'cash'|'card'; note?: string }>(),
+    getMyRide: builder.query({
+      query: (rideId) => ({
+        url: `/ride/my-ride/${rideId}`,
+        method: "GET",
+      }),
+      providesTags: ["RIDE"],
+    }),
+    getAllMyRides: builder.query({
+      query: (params: QueryParams | void) => ({
+        url: "/ride/all-my-rides",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["RIDE"],
+    }),
 
     getAllRides: builder.query({
       query: () => ({
@@ -25,24 +41,41 @@ export const rideApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["RIDE"],
-      transformResponse: (response) => response.data,
+      transformResponse: (response: { data: unknown }) => response.data,
+    }),
+    getLatestRide: builder.query({
+      query: (params: QueryParams | void = {}) => ({
+        url: "/ride/latest-ride",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["RIDE"],
+    }),
+    singleRideForAdmin: builder.query({
+      query: (id) => ({
+        url: `/ride/single-ride/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["RIDE"],
+    }),
+    getAllRidesForAdmin: builder.query({
+      query: (params: QueryParams | void) => ({
+        url: "/ride/all-rides-admin",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["RIDE"],
     }),
   }),
 });
-
-// listMyRides: build.query<any, { page?: number; q?: string; status?: RideStatus; from?: string; to?: string } | void>({
-// query: (params) => ({ url: '/rides/my', params }), providesTags: ['Ride']
-// }),
-// getRide: build.query<any, string>({ query: (id) => ({ url: `/rides/${id}` }), providesTags: (r, e, id) => [{ type: 'Ride', id }] }),
-// updateRideStatus: build.mutation<any, { id: string; status: RideStatus }>({
-// query: ({ id, status }) => ({ url: `/rides/${id}/status`, method: 'PATCH', body: { status } }),
-// invalidatesTags: (r, e, { id }) => [{ type: 'Ride', id }, 'Ride']
-// }),
-// incomingRequests: build.query<any, void>({ query: () => ({ url: '/rides/incoming' }), providesTags: ['Ride'] }),
-// acceptRide: build.mutation<any, { id: string }>({ query: ({ id }) =>
 
 export const {
   useRideRequestMutation,
   useGetAllRidesQuery,
   useCancelRideMutation,
+  useGetLatestRideQuery,
+  useGetMyRideQuery,
+  useGetAllMyRidesQuery,
+  useSingleRideForAdminQuery,
+  useGetAllRidesForAdminQuery,
 } = rideApi;
