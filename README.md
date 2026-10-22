@@ -88,7 +88,7 @@ All three are clean at the time of writing (0 errors; two upstream shadcn `react
 
 ## Deployment notes
 
-- Set `VITE_API_URL_PROD` to the deployed backend URL (including `/api/v1`); CORS and Google OAuth origins must match — see `../DEPLOYMENT.md`.
+- Set `VITE_API_URL_PROD` to the deployed backend URL (including `/api/v1`); CORS and Google OAuth origins must match — see the backend repository's [deployment notes](https://github.com/maruf-hasan-rion/ride-booking-system/blob/main/docs/DEPLOYMENT.md).
 - Keep real values in the provider's environment. `VITE_*` values are public in the built bundle: never put server-side secrets (including the backend ORS key) there. Demo-login defaults to off in production; enable it only for a demo deployment with rotating credentials.
 
 ## Known limitations (honest list)
