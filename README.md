@@ -28,13 +28,13 @@ npm install
 npm run dev                  # http://localhost:5173
 ```
 
-Useful accounts once the backend seed ran (`npm run seed` in the backend):
+Useful accounts once the backend seed ran (`npm run seed` in the backend). The emails are fixed; the passwords come from the backend's `SEED_PASSWORD` and `SEED_ADMIN_PASSWORD`:
 
-| Role   | Email                  | Password     |
-| ------ | ---------------------- | ------------ |
-| Admin  | admin@seed.gomove.app  | Seed!Ride123 |
-| Rider  | rider@seed.gomove.app  | Seed!Ride123 |
-| Driver | driver@seed.gomove.app | Seed!Ride123 |
+| Role   | Email                  |
+| ------ | ---------------------- |
+| Admin  | admin@seed.gomove.app  |
+| Rider  | rider@seed.gomove.app  |
+| Driver | driver@seed.gomove.app |
 
 `.env.example` documents every variable (demo-login vars are optional; `VITE_ORS_API_KEY` only controls client-side route drawing, not the booking flow). Real values stay in `.env.local` (gitignored) or in the hosting provider's environment settings.
 
@@ -89,7 +89,7 @@ All three are clean at the time of writing (0 errors; two upstream shadcn `react
 ## Deployment notes
 
 - Set `VITE_API_URL_PROD` to the deployed backend URL (including `/api/v1`); CORS and Google OAuth origins must match — see `../DEPLOYMENT.md`.
-- Keep real values in the provider's environment; nothing secret ships in the client bundle.
+- Keep real values in the provider's environment. `VITE_*` values are public in the built bundle: never put server-side secrets (including the backend ORS key) there. Demo-login defaults to off in production; enable it only for a demo deployment with rotating credentials.
 
 ## Known limitations (honest list)
 

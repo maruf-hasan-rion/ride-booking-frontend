@@ -1,6 +1,12 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { toast } from "sonner";
-import { useChangePasswordMutation } from "@/redux/features/auth/auth.api";
+import { useNavigate } from "react-router";
+import {
+  authApi,
+  useChangePasswordMutation,
+  useLogoutMutation,
+} from "@/redux/features/auth/auth.api";
+import { useAppDispatch } from "@/redux/hook";
 import { getApiErrorMessage } from "@/utils/apiResponse";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,11 +20,14 @@ type ChangePasswordState = {
 };
 
 export const ChangePasswordCard = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [passwords, setPasswords] = useState<ChangePasswordState>({
     oldPassword: "",
     newPassword: "",
   });
   const [changePassword, { isLoading }] = useChangePasswordMutation();
+  const [logout] = useLogoutMutation();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -44,8 +53,14 @@ export const ChangePasswordCard = () => {
 
     try {
       await changePassword(passwords).unwrap();
-      toast.success("Password changed successfully.");
+      toast.success("Password changed. Please log in again.");
       setPasswords({ oldPassword: "", newPassword: "" });
+
+      // The backend increments tokenVersion, so the current session is no
+      // longer valid. Clear the cookies/cache and return to login.
+      await logout(undefined).unwrap().catch(() => undefined);
+      dispatch(authApi.util.resetApiState());
+      navigate("/login", { replace: true });
     } catch (error) {
       toast.error(
         getApiErrorMessage(error, "Failed to change password. Please try again.")

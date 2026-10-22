@@ -10,6 +10,7 @@ import { DriverProfileGate } from "@/components/modules/Driver/DriverProfileGate
 import { EmergencySOSButton } from "@/components/shared/safety/EmergencySOSButton";
 import { useGetDriverReportQuery } from "@/redux/features/stats/stats.api";
 import {
+  useCancelAssignedRideMutation,
   useGetActiveRideForDriverQuery,
   useGetDriverProfileQuery,
   useUpdateDriverRideStatusMutation,
@@ -21,6 +22,7 @@ import type { RideStatus } from "@/types/domain";
 import { AnalyticsStatCard } from "@/components/modules/Admin/AnalyticsStatCard";
 import { extractData, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatGeoCoordinates } from "@/utils/formatters";
+import { getCurrentDriverIncome } from "@/utils/rideStats";
 
 type DriverProfileState = {
   isOnline?: boolean;
@@ -117,12 +119,15 @@ const AvailabilityCard = ({
 };
 
 const EarningsCards = ({ report }: { report: DriverReport | null }) => {
-  const dailyIncome =
-    report?.ridesDaily?.reduce((sum, item) => sum + (item.totalIncome || 0), 0) || 0;
-  const weeklyIncome =
-    report?.ridesWeekly?.reduce((sum, item) => sum + (item.totalIncome || 0), 0) || 0;
-  const monthlyIncome =
-    report?.ridesMonthly?.reduce((sum, item) => sum + (item.totalIncome || 0), 0) || 0;
+  const {
+    daily: dailyIncome,
+    weekly: weeklyIncome,
+    monthly: monthlyIncome,
+  } = getCurrentDriverIncome(
+    report?.ridesDaily,
+    report?.ridesWeekly,
+    report?.ridesMonthly,
+  );
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -154,11 +159,15 @@ const EarningsCards = ({ report }: { report: DriverReport | null }) => {
 const ActiveRideCard = ({
   ride,
   isUpdating,
+  isCancelling,
   onAdvanceStatus,
+  onCancel,
 }: {
   ride: DriverActiveRide | null;
   isUpdating: boolean;
+  isCancelling: boolean;
   onAdvanceStatus: (rideId: string, status: RideStatus) => void;
+  onCancel: (rideId: string) => void;
 }) => {
   if (!ride) {
     return (
@@ -200,8 +209,21 @@ const ActiveRideCard = ({
           {nextStatus ? `Mark ${nextStatus.replaceAll("_", " ")}` : "Ride Completed"}
         </Button>
 
+        {ride.status === "ACCEPTED" ? (
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={isCancelling || isUpdating}
+            onClick={() => onCancel(ride._id)}
+          >
+            {isCancelling ? "Cancelling..." : "Cancel Ride (before pickup)"}
+          </Button>
+        ) : null}
+
         <p className="text-xs text-muted-foreground">
-          Cancellation is handled from rider/admin side in current backend workflow.
+          You can cancel before pickup. After pickup, contact admin/support for
+          intervention.
         </p>
       </CardContent>
     </Card>
@@ -218,20 +240,29 @@ export default function DriverOverview() {
   const profile = extractData<DriverProfileState>(profileResponse);
   const hasDriverProfile = Boolean(profile);
 
-  const { data: activeRideResponse, isLoading: isActiveRideLoading } = useGetActiveRideForDriverQuery(
-    undefined,
-    {
-      pollingInterval: POLL_INTERVALS.RIDE_STATUS,
-      skip: !hasDriverProfile,
-    }
-  );
-  const { data: reportResponse, isLoading: isReportLoading } = useGetDriverReportQuery(undefined, {
+  const {
+    data: activeRideResponse,
+    isLoading: isActiveRideLoading,
+    error: activeRideError,
+    refetch: refetchActiveRide,
+  } = useGetActiveRideForDriverQuery(undefined, {
+    pollingInterval: POLL_INTERVALS.RIDE_STATUS,
+    skip: !hasDriverProfile,
+  });
+  const {
+    data: reportResponse,
+    isLoading: isReportLoading,
+    error: reportError,
+    refetch: refetchReport,
+  } = useGetDriverReportQuery(undefined, {
     pollingInterval: POLL_INTERVALS.REPORTS,
     skip: !hasDriverProfile,
   });
 
   const [updateDriverStatus, { isLoading: isUpdatingStatus }] = useUpdateDriverStatusMutation();
   const [updateRideStatus, { isLoading: isUpdatingRideStatus }] = useUpdateDriverRideStatusMutation();
+  const [cancelAssignedRide, { isLoading: isCancellingRide }] =
+    useCancelAssignedRideMutation();
 
   const activeRide = extractData<DriverActiveRide>(activeRideResponse);
   const report = extractData<DriverReport>(reportResponse);
@@ -252,6 +283,24 @@ export default function DriverOverview() {
     });
   };
 
+  const handleCancelRide = async (rideId: string) => {
+    const result = await runAction(
+      () =>
+        cancelAssignedRide({
+          rideId,
+          reason: "Driver cancelled before pickup",
+        }).unwrap(),
+      {
+        success: "Ride cancelled.",
+        fallback: "Failed to cancel ride.",
+      },
+    );
+
+    if (result) {
+      void refetchActiveRide();
+    }
+  };
+
   if (needsProfileSetup) {
     return (
       <DriverProfileGate
@@ -267,6 +316,18 @@ export default function DriverOverview() {
         <DataStateView
           isLoading={isProfileLoading || isActiveRideLoading || isReportLoading}
           hasData
+          errorMessage={
+            activeRideError || reportError
+              ? getApiErrorMessage(
+                  activeRideError || reportError,
+                  "Failed to load driver dashboard data.",
+                )
+              : undefined
+          }
+          onRetry={() => {
+            void refetchActiveRide();
+            void refetchReport();
+          }}
         >
           <AvailabilityCard
             isOnline={Boolean(profile?.isOnline)}
@@ -278,7 +339,9 @@ export default function DriverOverview() {
           <ActiveRideCard
             ride={activeRide || null}
             isUpdating={isUpdatingRideStatus}
+            isCancelling={isCancellingRide}
             onAdvanceStatus={handleAdvanceStatus}
+            onCancel={handleCancelRide}
           />
 
           <EarningsCards report={report || null} />

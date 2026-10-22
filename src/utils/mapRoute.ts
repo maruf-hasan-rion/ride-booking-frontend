@@ -6,6 +6,7 @@ type RouteRequestParams = {
   pickup: Coordinate;
   destination: Coordinate;
   orsApiKey?: string;
+  signal?: AbortSignal;
 };
 
 export type RouteResult = {
@@ -17,6 +18,7 @@ export const fetchDrivingRoutePolyline = async ({
   pickup,
   destination,
   orsApiKey,
+  signal,
 }: RouteRequestParams): Promise<RouteResult> => {
   if (!orsApiKey) return { coordinates: [], distanceKm: null };
 
@@ -35,6 +37,7 @@ export const fetchDrivingRoutePolyline = async ({
           "Content-Type": "application/json",
         },
         timeout: 15000,
+        signal,
       }
     );
 

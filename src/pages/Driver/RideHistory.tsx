@@ -15,6 +15,9 @@ type DriverCompletedRide = {
   _id: string;
   createdAt?: string;
   fare?: number;
+  timestamps?: {
+    completedAt?: string;
+  };
 };
 
 // Completed rides only, so the live status filter stays fixed.
@@ -37,14 +40,18 @@ export default function DriverRideHistory() {
     const hasMaxFare = fareRange.max.trim() !== "" && !Number.isNaN(maxFare);
 
     return rides.filter((ride) => {
-      const createdAt = ride.createdAt || "";
-      const dateValue = createdAt ? createdAt.slice(0, 10) : "";
+      const completedAt = ride.timestamps?.completedAt || ride.createdAt || "";
+      const dateValue = completedAt ? completedAt.slice(0, 10) : "";
       const fare = ride.fare ?? 0;
 
       const matchesSearch =
         !searchTerm ||
         ride._id.toLowerCase().includes(searchTerm) ||
-        formatDateTime(ride.createdAt).toLowerCase().includes(searchTerm);
+        formatDateTime(
+          ride.timestamps?.completedAt || ride.createdAt,
+        )
+          .toLowerCase()
+          .includes(searchTerm);
 
       const matchesDate = !dateSearch || dateValue === dateSearch;
       const matchesMinFare = !hasMinFare || fare >= minFare;
@@ -120,7 +127,7 @@ export default function DriverRideHistory() {
                   {paginatedRides.map((ride) => (
                     <TableRow key={ride._id}>
                       <TableCell className="font-mono text-xs">{ride._id}</TableCell>
-                      <TableCell>{formatDateTime(ride.createdAt)}</TableCell>
+                      <TableCell>{formatDateTime(ride.timestamps?.completedAt)}</TableCell>
                       <TableCell>{formatCurrencyBDT(ride.fare)}</TableCell>
                       <TableCell>
                         <StatusBadge status="COMPLETED" />

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -33,6 +33,7 @@ import type { RideStatus } from "@/types/domain";
 import {
   RIDER_CANCELLABLE_STATUSES,
   RIDER_ACTIVE_RIDE_STATUSES,
+  coordinatesEqual,
   getCoordinates,
   getDriverDetails,
   type RideGeoPoint,
@@ -85,6 +86,11 @@ const calculateStraightDistanceKm = (from: Coordinate, to: Coordinate) => {
 const canCancelRide = (status?: RideStatus) =>
   Boolean(status && RIDER_CANCELLABLE_STATUSES.includes(status));
 
+const createIdempotencyKey = () =>
+  typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
 const formatCoordinate = (coordinate: Coordinate | null) => {
   if (!coordinate) return "";
   return `${coordinate[0].toFixed(5)}, ${coordinate[1].toFixed(5)}`;
@@ -135,6 +141,10 @@ export default function RideRequest() {
 
   const [requestRide, { isLoading: isRequestingRide }] = useRideRequestMutation();
   const [cancelRide, { isLoading: isCancellingRide }] = useCancelRideMutation();
+  const idempotencyKeyRef = useRef(createIdempotencyKey());
+  const resetIdempotencyKey = useCallback(() => {
+    idempotencyKeyRef.current = createIdempotencyKey();
+  }, []);
 
   const { data: latestRideResponse, isFetching: isLoadingLatestRide, refetch } =
     useGetLatestRideQuery(undefined, {
@@ -175,9 +185,23 @@ export default function RideRequest() {
     const rideDestination = getCoordinates(currentRide.destination as RideGeoPoint | null);
     const liveLocation = getCoordinates(currentRide.currentLocation as RideGeoPoint | null);
 
-    if (ridePickup) setPickup(ridePickup);
-    if (rideDestination) setDestination(rideDestination);
-    if (liveLocation) setCurrentLocation(liveLocation);
+    if (ridePickup) {
+      setPickup((previous) =>
+        coordinatesEqual(previous, ridePickup) ? previous : ridePickup,
+      );
+    }
+    if (rideDestination) {
+      setDestination((previous) =>
+        coordinatesEqual(previous, rideDestination)
+          ? previous
+          : rideDestination,
+      );
+    }
+    if (liveLocation) {
+      setCurrentLocation((previous) =>
+        coordinatesEqual(previous, liveLocation) ? previous : liveLocation,
+      );
+    }
 
     if (typeof currentRide.distance === "number") {
       setDistanceKm(Number(currentRide.distance.toFixed(2)));
@@ -188,7 +212,7 @@ export default function RideRequest() {
     }
   }, [currentRide]);
 
-  const syncCurrentLocation = () => {
+  const syncCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported in your browser.");
       return;
@@ -203,20 +227,23 @@ export default function RideRequest() {
 
         setPickup(coordinate);
         setCurrentLocation(coordinate);
+        resetIdempotencyKey();
       },
       () => {
         toast.error("Unable to access your current location.");
       }
     );
-  };
+  }, [resetIdempotencyKey]);
 
   useEffect(() => {
     if (!hasActiveRide && !pickup) {
       syncCurrentLocation();
     }
-  }, [hasActiveRide, pickup]);
+  }, [hasActiveRide, pickup, syncCurrentLocation]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const resolveRoute = async () => {
       if (!pickup || !destination) {
         setRouteCoordinates([]);
@@ -227,7 +254,12 @@ export default function RideRequest() {
         pickup,
         destination,
         orsApiKey: config.orsApiKey,
+        signal: controller.signal,
       });
+
+      if (controller.signal.aborted) {
+        return;
+      }
 
       setRouteCoordinates(routeResult.coordinates);
 
@@ -239,7 +271,9 @@ export default function RideRequest() {
       }
     };
 
-    resolveRoute();
+    void resolveRoute();
+
+    return () => controller.abort();
   }, [pickup, destination, hasActiveRide]);
 
   const bookRide = async () => {
@@ -270,6 +304,7 @@ export default function RideRequest() {
     const result = await runAction(
       () =>
         requestRide({
+          idempotencyKey: idempotencyKeyRef.current,
           pickupLocation: {
             type: "Point",
             coordinates: [pickup[1], pickup[0]],
@@ -290,6 +325,7 @@ export default function RideRequest() {
     );
 
     if (result) {
+      resetIdempotencyKey();
       refetch();
     }
   };
@@ -352,7 +388,10 @@ export default function RideRequest() {
                 ) : null}
                 <DestinationPicker
                   locked={hasActiveRide}
-                  onSelect={(coordinate) => setDestination(coordinate)}
+                  onSelect={(coordinate) => {
+                    resetIdempotencyKey();
+                    setDestination(coordinate);
+                  }}
                 />
               </MapContainer>
             </div>

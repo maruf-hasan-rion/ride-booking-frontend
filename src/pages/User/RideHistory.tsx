@@ -11,7 +11,7 @@ import { PaginatedDataTable } from "@/components/shared/dashboard/PaginatedDataT
 import { StatusBadge } from "@/components/shared/dashboard/StatusBadge";
 import { RIDE_STATUS_FILTER_OPTIONS } from "@/constants/rideStatus";
 import type { RideStatus } from "@/types/domain";
-import { extractArrayData, extractMeta } from "@/utils/apiResponse";
+import { extractArrayData, extractMeta, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatDateTime } from "@/utils/formatters";
 
 type RiderHistoryRide = {
@@ -35,27 +35,19 @@ export default function RiderRideHistory() {
       params.status = params.rideStatus;
       delete params.rideStatus;
     }
-    return params;
-  }, [query]);
 
-  const { data: ridesResponse, isLoading } = useGetAllMyRidesQuery(apiQuery);
+    const minFare = fareRange.min.trim();
+    const maxFare = fareRange.max.trim();
+    if (minFare) params.minFare = minFare;
+    if (maxFare) params.maxFare = maxFare;
+
+    return params;
+  }, [fareRange.max, fareRange.min, query]);
+
+  const { data: ridesResponse, isLoading, error, refetch } =
+    useGetAllMyRidesQuery(apiQuery);
 
   const rides = extractArrayData<RiderHistoryRide>(ridesResponse);
-
-  const visibleRides = useMemo(() => {
-    const minFare = Number(fareRange.min);
-    const maxFare = Number(fareRange.max);
-    const hasMinFare = fareRange.min.trim() !== "" && !Number.isNaN(minFare);
-    const hasMaxFare = fareRange.max.trim() !== "" && !Number.isNaN(maxFare);
-
-    return rides.filter((ride) => {
-      const fare = ride.fare ?? 0;
-      if (hasMinFare && fare < minFare) return false;
-      if (hasMaxFare && fare > maxFare) return false;
-      return true;
-    });
-  }, [fareRange.max, fareRange.min, rides]);
-
   const totalPage = extractMeta(ridesResponse)?.totalPage || 1;
 
   const handleReset = () => {
@@ -76,12 +68,24 @@ export default function RiderRideHistory() {
         statusOptions={RIDE_STATUS_FILTER_OPTIONS}
         onReset={handleReset}
       >
-        <FareRangeInputs value={fareRange} onChange={setFareRange} />
+        <FareRangeInputs
+          value={fareRange}
+          onChange={(value) => {
+            setFareRange(value);
+            setState((previous) => ({ ...previous, page: 1 }));
+          }}
+        />
       </ListFilterBar>
 
       <DataStateView
         isLoading={isLoading}
-        hasData={visibleRides.length > 0}
+        hasData={rides.length > 0}
+        errorMessage={
+          error
+            ? getApiErrorMessage(error, "Failed to load ride history.")
+            : undefined
+        }
+        onRetry={() => void refetch()}
         emptyMessage="No ride history found."
       >
         <PaginatedDataTable
@@ -100,7 +104,7 @@ export default function RiderRideHistory() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {visibleRides.map((ride) => (
+              {rides.map((ride) => (
                 <TableRow key={ride._id}>
                   <TableCell>{ride.distance?.toFixed(2) ?? "N/A"}</TableCell>
                   <TableCell>{formatCurrencyBDT(ride.fare)}</TableCell>

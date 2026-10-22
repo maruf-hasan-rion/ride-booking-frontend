@@ -65,6 +65,14 @@ export const driverApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["DRIVER", "RIDE"],
     }),
+    cancelAssignedRide: builder.mutation({
+      query: ({ rideId, reason }: { rideId: string; reason?: string }) => ({
+        url: `/driver/${rideId}/cancel`,
+        method: "PATCH",
+        data: { reason },
+      }),
+      invalidatesTags: ["DRIVER", "RIDE"],
+    }),
     updateDriverRideStatus: builder.mutation({
       query: ({ rideId, status }: { rideId: string; status: RideStatus }) => ({
         url: `/driver/${rideId}/status`,
@@ -113,6 +121,7 @@ export const {
   useGetActiveRideForDriverQuery,
   useAcceptRideMutation,
   useRejectRideMutation,
+  useCancelAssignedRideMutation,
   useUpdateDriverRideStatusMutation,
   useGetDriverEarningsQuery,
   useGetAllDriversQuery,

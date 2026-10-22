@@ -89,7 +89,7 @@ export const authApi = baseApi.injectEndpoints({
     changePassword: builder.mutation<IResponse<unknown>, { oldPassword: string; newPassword: string }>({
       query: (data) => ({
         url: "/auth/change-password",
-        method: "PATCH",
+        method: "POST",
         data,
       }),
       invalidatesTags: ["AUTH"],

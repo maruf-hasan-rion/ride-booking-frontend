@@ -34,7 +34,7 @@ const resolveBaseUrl = (): string => {
 const resolveDemoLoginEnabled = (): boolean => {
   const explicitValue = readBooleanEnv("VITE_ENABLE_DEMO_LOGIN");
   if (explicitValue !== undefined) return explicitValue;
-  return true;
+  return !import.meta.env.PROD;
 };
 
 const config = {

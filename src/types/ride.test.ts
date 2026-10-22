@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DRIVER_ACTIVE_RIDE_STATUSES,
   RIDER_ACTIVE_RIDE_STATUSES,
+  coordinatesEqual,
   getCoordinates,
   getDriverDetails,
 } from "./ride";
@@ -17,6 +18,19 @@ describe("getCoordinates", () => {
     expect(getCoordinates(null)).toBeNull();
     expect(getCoordinates({ coordinates: [90] })).toBeNull();
     expect(getCoordinates({ coordinates: ["x", "y"] as never })).toBeNull();
+  });
+});
+
+describe("coordinatesEqual", () => {
+  it("compares coordinates by value, not array identity", () => {
+    expect(coordinatesEqual([23.78, 90.42], [23.78, 90.42])).toBe(true);
+    expect(coordinatesEqual([23.78, 90.42], [23.79, 90.42])).toBe(false);
+  });
+
+  it("treats missing coordinates as unequal", () => {
+    expect(coordinatesEqual(null, [23.78, 90.42])).toBe(false);
+    expect(coordinatesEqual([23.78, 90.42], null)).toBe(false);
+    expect(coordinatesEqual(null, null)).toBe(false);
   });
 });
 

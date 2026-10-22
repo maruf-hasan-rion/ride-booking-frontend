@@ -77,8 +77,9 @@ const IncomingRequestCard = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
-        <p className="text-muted-foreground">Email: {rider?.email || "N/A"}</p>
-        <p className="text-muted-foreground">Phone: {rider?.contactNo || "N/A"}</p>
+        <p className="text-muted-foreground">
+          Contact details are shared after you accept.
+        </p>
         <p>Pickup: {formatGeoCoordinates(ride?.pickupLocation)}</p>
         <p>Destination: {formatGeoCoordinates(ride?.destination)}</p>
         <p className="font-semibold">Estimated Fare: {formatCurrencyBDT(ride?.fare)}</p>
@@ -127,13 +128,15 @@ export default function DriverRideRequest() {
     return params;
   }, [query.limit, query.page, query.searchTerm]);
 
-  const { data: incomingResponse, isLoading: isIncomingLoading } = useGetIncomingRideRequestsQuery(
-    apiQuery,
-    {
-      pollingInterval: POLL_INTERVALS.RIDE_STATUS,
-      skip: !hasDriverProfile || !profile?.isApproved || !profile?.isOnline,
-    }
-  );
+  const {
+    data: incomingResponse,
+    isLoading: isIncomingLoading,
+    error: incomingError,
+    refetch: refetchIncoming,
+  } = useGetIncomingRideRequestsQuery(apiQuery, {
+    pollingInterval: POLL_INTERVALS.RIDE_STATUS,
+    skip: !hasDriverProfile || !profile?.isApproved || !profile?.isOnline,
+  });
 
   const [acceptRide, { isLoading: isAccepting }] = useAcceptRideMutation();
   const [rejectRide, { isLoading: isRejecting }] = useRejectRideMutation();
@@ -194,7 +197,7 @@ export default function DriverRideRequest() {
   return (
     <div className="space-y-4">
       <ListFilterBar
-        searchPlaceholder="Search by rider info"
+        searchPlaceholder="Search by rider name or ride ID"
         searchTerm={state.searchTerm}
         onSearchChange={(value) =>
           setState((previous) => ({ ...previous, page: 1, searchTerm: value }))
@@ -214,6 +217,12 @@ export default function DriverRideRequest() {
       <DataStateView
         isLoading={isIncomingLoading}
         hasData={incoming.length > 0}
+        errorMessage={
+          incomingError
+            ? getApiErrorMessage(incomingError, "Failed to load ride requests.")
+            : undefined
+        }
+        onRetry={() => void refetchIncoming()}
         emptyMessage="No incoming ride requests right now."
       >
         <PaginatedDataTable

@@ -10,7 +10,7 @@ import { useListQueryState } from "@/hooks/useListQueryState";
 import { useGetAllRidesForAdminQuery } from "@/redux/features/ride/ride.api";
 import { RIDE_STATUS_FILTER_OPTIONS } from "@/constants/rideStatus";
 import type { RideStatus } from "@/types/domain";
-import { extractArrayData, extractMeta } from "@/utils/apiResponse";
+import { extractArrayData, extractMeta, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatDateTime } from "@/utils/formatters";
 
 type RidePerson =
@@ -82,7 +82,8 @@ export default function AdminRideOversight() {
     [driverSearch, query, riderSearch]
   );
 
-  const { data: ridesResponse, isLoading } = useGetAllRidesForAdminQuery(queryParams);
+  const { data: ridesResponse, isLoading, error, refetch } =
+    useGetAllRidesForAdminQuery(queryParams);
 
   const rides = extractArrayData<AdminRide>(ridesResponse);
   const meta = extractMeta(ridesResponse);
@@ -141,6 +142,12 @@ export default function AdminRideOversight() {
           <DataStateView
             isLoading={isLoading}
             hasData={rides.length > 0}
+            errorMessage={
+              error
+                ? getApiErrorMessage(error, "Failed to load ride oversight data.")
+                : undefined
+            }
+            onRetry={() => void refetch()}
             emptyMessage="No ride data found for current filters."
           >
             <PaginatedDataTable

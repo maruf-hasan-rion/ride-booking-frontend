@@ -19,7 +19,7 @@ import {
   type RideTimestamps,
 } from "@/types/ride";
 import type { RideStatus } from "@/types/domain";
-import { extractData } from "@/utils/apiResponse";
+import { extractData, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatDateTime } from "@/utils/formatters";
 import { fetchDrivingRoutePolyline } from "@/utils/mapRoute";
 import config from "@/config";
@@ -42,10 +42,13 @@ type RideDetailsEntity = {
 
 export default function MyRideDetails() {
   const { rideId } = useParams<{ rideId: string }>();
-  const { data: rideResponse, isLoading } = useGetMyRideQuery(rideId ?? "", {
-    skip: !rideId,
-    pollingInterval: POLL_INTERVALS.RIDE_STATUS,
-  });
+  const { data: rideResponse, isLoading, error, refetch } = useGetMyRideQuery(
+    rideId ?? "",
+    {
+      skip: !rideId,
+      pollingInterval: POLL_INTERVALS.RIDE_STATUS,
+    },
+  );
 
   const ride = extractData<RideDetailsEntity>(rideResponse);
   const [routeCoordinates, setRouteCoordinates] = useState<Coordinate[]>([]);
@@ -54,11 +57,33 @@ export default function MyRideDetails() {
     configureLeafletDefaultMarker();
   }, []);
 
-  const pickup = getCoordinates(ride?.pickupLocation);
-  const destination = getCoordinates(ride?.destination);
+  const pickupLng = ride?.pickupLocation?.coordinates?.[0];
+  const pickupLat = ride?.pickupLocation?.coordinates?.[1];
+  const destinationLng = ride?.destination?.coordinates?.[0];
+  const destinationLat = ride?.destination?.coordinates?.[1];
+
+  const pickup = useMemo<Coordinate | null>(() => {
+    if (typeof pickupLng !== "number" || typeof pickupLat !== "number") {
+      return null;
+    }
+    return [pickupLat, pickupLng];
+  }, [pickupLng, pickupLat]);
+
+  const destination = useMemo<Coordinate | null>(() => {
+    if (
+      typeof destinationLng !== "number" ||
+      typeof destinationLat !== "number"
+    ) {
+      return null;
+    }
+    return [destinationLat, destinationLng];
+  }, [destinationLng, destinationLat]);
+
   const driverLocation = getCoordinates(ride?.currentLocation);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const resolveRoute = async () => {
       if (!pickup || !destination) {
         setRouteCoordinates([]);
@@ -69,12 +94,17 @@ export default function MyRideDetails() {
         pickup,
         destination,
         orsApiKey: config.orsApiKey,
+        signal: controller.signal,
       });
 
-      setRouteCoordinates(route.coordinates);
+      if (!controller.signal.aborted) {
+        setRouteCoordinates(route.coordinates);
+      }
     };
 
-    resolveRoute();
+    void resolveRoute();
+
+    return () => controller.abort();
   }, [pickup, destination]);
 
   const driverInfo = useMemo(() => {
@@ -92,6 +122,12 @@ export default function MyRideDetails() {
       <DataStateView
         isLoading={isLoading}
         hasData={false}
+        errorMessage={
+          error
+            ? getApiErrorMessage(error, "Failed to load ride details.")
+            : undefined
+        }
+        onRetry={() => void refetch()}
         emptyMessage="Ride details are not available."
       />
     );
@@ -106,6 +142,12 @@ export default function MyRideDetails() {
     <DataStateView
       isLoading={isLoading}
       hasData
+      errorMessage={
+        error
+          ? getApiErrorMessage(error, "Failed to load ride details.")
+          : undefined
+      }
+      onRetry={() => void refetch()}
       emptyMessage="Ride details are not available."
     >
       <section className="mx-auto max-w-7xl p-4 md:p-6">

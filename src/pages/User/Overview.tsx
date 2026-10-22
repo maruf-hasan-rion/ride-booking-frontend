@@ -8,7 +8,7 @@ import { AnalyticsStatCard } from "@/components/modules/Admin/AnalyticsStatCard"
 import { useGetRiderReportQuery } from "@/redux/features/stats/stats.api";
 import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
 import { useGetAllMyRidesQuery } from "@/redux/features/ride/ride.api";
-import { extractArrayData, extractData } from "@/utils/apiResponse";
+import { extractArrayData, extractData, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatDateTime } from "@/utils/formatters";
 import { Car, DollarSign, Clock, Ban, ChevronRight } from "lucide-react";
 import { Link } from "react-router";
@@ -27,8 +27,18 @@ type RiderReport = {
 
 export default function UserOverview() {
   const { data: userResponse, isLoading: isUserLoading } = useUserInfoQuery(undefined);
-  const { data: reportResponse, isLoading: isReportLoading } = useGetRiderReportQuery(undefined);
-  const { data: ridesResponse, isLoading: isRidesLoading } = useGetAllMyRidesQuery({
+  const {
+    data: reportResponse,
+    isLoading: isReportLoading,
+    error: reportError,
+    refetch: refetchReport,
+  } = useGetRiderReportQuery(undefined);
+  const {
+    data: ridesResponse,
+    isLoading: isRidesLoading,
+    error: ridesError,
+    refetch: refetchRides,
+  } = useGetAllMyRidesQuery({
     page: 1,
     limit: 3,
   });
@@ -60,7 +70,16 @@ export default function UserOverview() {
         </CardContent>
       </Card>
 
-      <DataStateView isLoading={isUserLoading || isReportLoading} hasData>
+      <DataStateView
+        isLoading={isUserLoading || isReportLoading}
+        hasData
+        errorMessage={
+          reportError
+            ? getApiErrorMessage(reportError, "Failed to load rider statistics.")
+            : undefined
+        }
+        onRetry={() => void refetchReport()}
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <AnalyticsStatCard
             title="Total Rides"
@@ -118,6 +137,12 @@ export default function UserOverview() {
           <DataStateView
             isLoading={isRidesLoading}
             hasData={recentRides.length > 0}
+            errorMessage={
+              ridesError
+                ? getApiErrorMessage(ridesError, "Failed to load recent rides.")
+                : undefined
+            }
+            onRetry={() => void refetchRides()}
             emptyMessage="No recent rides yet."
           >
             <div className="space-y-3">

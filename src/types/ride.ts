@@ -94,3 +94,16 @@ export const getCoordinates = (
   }
   return null;
 };
+
+/** Value equality for Leaflet coordinates, so polling does not recreate
+ * dependencies (and therefore does not re-run route requests) unnecessarily. */
+export const coordinatesEqual = (
+  left?: [number, number] | null,
+  right?: [number, number] | null,
+): boolean =>
+  Boolean(
+    left &&
+      right &&
+      left[0] === right[0] &&
+      left[1] === right[1],
+  );

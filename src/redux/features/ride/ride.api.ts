@@ -5,10 +5,19 @@ type QueryParams = Record<string, string | number | boolean | undefined>;
 export const rideApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     rideRequest: builder.mutation({
-      query: (rideinfo) => ({
+      query: ({
+        idempotencyKey,
+        ...rideinfo
+      }: {
+        idempotencyKey?: string;
+        [key: string]: unknown;
+      }) => ({
         url: "/ride/request",
         method: "POST",
         data: rideinfo,
+        headers: idempotencyKey
+          ? { "Idempotency-Key": idempotencyKey }
+          : undefined,
       }),
       invalidatesTags: ["RIDE"],
     }),
@@ -66,6 +75,14 @@ export const rideApi = baseApi.injectEndpoints({
       }),
       providesTags: ["RIDE"],
     }),
+    adminCancelRide: builder.mutation({
+      query: ({ rideId, reason }: { rideId: string; reason: string }) => ({
+        url: `/ride/admin-cancel/${rideId}`,
+        method: "PATCH",
+        data: { reason },
+      }),
+      invalidatesTags: ["RIDE"],
+    }),
   }),
 });
 
@@ -78,4 +95,5 @@ export const {
   useGetAllMyRidesQuery,
   useSingleRideForAdminQuery,
   useGetAllRidesForAdminQuery,
+  useAdminCancelRideMutation,
 } = rideApi;

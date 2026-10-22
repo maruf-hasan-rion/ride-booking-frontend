@@ -2,12 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { POLL_INTERVALS } from "@/constants/polling";
 import { OSM_TILE_URL } from "@/constants/urls";
-import { useSingleRideForAdminQuery } from "@/redux/features/ride/ride.api";
+import {
+  useAdminCancelRideMutation,
+  useSingleRideForAdminQuery,
+} from "@/redux/features/ride/ride.api";
+import { useToastAction } from "@/hooks/useToastAction";
 import {
   DRIVER_ACTIVE_RIDE_STATUSES,
-  getCoordinates,
   getDriverDetails,
   type RideGeoPoint,
   type RideTimestamps,
@@ -16,7 +22,7 @@ import type { RideStatus } from "@/types/domain";
 import { DataStateView } from "@/components/shared/dashboard/DataStateView";
 import { StatusBadge } from "@/components/shared/dashboard/StatusBadge";
 import { configureLeafletDefaultMarker } from "@/lib/leaflet";
-import { extractData } from "@/utils/apiResponse";
+import { extractData, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatDateTime } from "@/utils/formatters";
 import { fetchDrivingRoutePolyline } from "@/utils/mapRoute";
 import config from "@/config";
@@ -40,11 +46,16 @@ type AdminRideDetails = {
 
 export default function RideDetails() {
   const { id } = useParams<{ id: string }>();
-  const { data: rideResponse, isLoading } = useSingleRideForAdminQuery(id ?? "", {
-    skip: !id,
-    pollingInterval: POLL_INTERVALS.ADMIN_RIDE_DETAIL,
-  });
+  const { data: rideResponse, isLoading, error, refetch } =
+    useSingleRideForAdminQuery(id ?? "", {
+      skip: !id,
+      pollingInterval: POLL_INTERVALS.ADMIN_RIDE_DETAIL,
+    });
   const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
+  const [cancelReason, setCancelReason] = useState("");
+  const [adminCancelRide, { isLoading: isCancellingRide }] =
+    useAdminCancelRideMutation();
+  const runAction = useToastAction();
 
   const ride = extractData<AdminRideDetails>(rideResponse);
 
@@ -52,10 +63,31 @@ export default function RideDetails() {
     configureLeafletDefaultMarker();
   }, []);
 
-  const pickup = getCoordinates(ride?.pickupLocation);
-  const destination = getCoordinates(ride?.destination);
+  const pickupLng = ride?.pickupLocation?.coordinates?.[0];
+  const pickupLat = ride?.pickupLocation?.coordinates?.[1];
+  const destinationLng = ride?.destination?.coordinates?.[0];
+  const destinationLat = ride?.destination?.coordinates?.[1];
+
+  const pickup = useMemo<Coordinate | null>(() => {
+    if (typeof pickupLng !== "number" || typeof pickupLat !== "number") {
+      return null;
+    }
+    return [pickupLat, pickupLng];
+  }, [pickupLng, pickupLat]);
+
+  const destination = useMemo<Coordinate | null>(() => {
+    if (
+      typeof destinationLng !== "number" ||
+      typeof destinationLat !== "number"
+    ) {
+      return null;
+    }
+    return [destinationLat, destinationLng];
+  }, [destinationLng, destinationLat]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const resolveRoute = async () => {
       if (!pickup || !destination) {
         setRouteCoords([]);
@@ -66,11 +98,17 @@ export default function RideDetails() {
         pickup,
         destination,
         orsApiKey: config.orsApiKey,
+        signal: controller.signal,
       });
-      setRouteCoords(route.coordinates);
+
+      if (!controller.signal.aborted) {
+        setRouteCoords(route.coordinates);
+      }
     };
 
-    resolveRoute();
+    void resolveRoute();
+
+    return () => controller.abort();
   }, [pickup, destination]);
 
   const driverInfo = useMemo(() => {
@@ -78,11 +116,43 @@ export default function RideDetails() {
     return details.vehicle || "Unavailable";
   }, [ride]);
 
+  const handleAdminCancel = async () => {
+    if (!ride) return;
+
+    const reason = cancelReason.trim();
+    if (reason.length < 3) {
+      toast.error("Please enter a cancellation reason (at least 3 characters).");
+      return;
+    }
+
+    const result = await runAction(
+      () => adminCancelRide({ rideId: ride._id, reason }).unwrap(),
+      {
+        success: "Ride cancelled successfully.",
+        fallback: "Failed to cancel ride.",
+      },
+    );
+
+    if (result) {
+      setCancelReason("");
+      void refetch();
+    }
+  };
+
+  const isTerminalRide =
+    ride?.status === "COMPLETED" || ride?.status === "CANCELLED";
+
   if (!pickup || !destination) {
     return (
       <DataStateView
         isLoading={isLoading}
         hasData={false}
+        errorMessage={
+          error
+            ? getApiErrorMessage(error, "Failed to load ride details.")
+            : undefined
+        }
+        onRetry={() => void refetch()}
         emptyMessage="Ride not found."
       />
     );
@@ -97,6 +167,12 @@ export default function RideDetails() {
     <DataStateView
       isLoading={isLoading}
       hasData
+      errorMessage={
+        error
+          ? getApiErrorMessage(error, "Failed to load ride details.")
+          : undefined
+      }
+      onRetry={() => void refetch()}
       emptyMessage="Ride not found."
     >
       <section className="section-shell py-6">
@@ -153,6 +229,31 @@ export default function RideDetails() {
                 </li>
               </ul>
             </div>
+
+            {!isTerminalRide ? (
+              <div className="space-y-3 rounded-lg border border-destructive/30 p-4">
+                <div>
+                  <p className="font-medium text-destructive">Admin intervention</p>
+                  <p className="text-xs text-muted-foreground">
+                    Cancel a stuck or unsafe ride. This releases the rider and
+                    the driver's active-ride lock.
+                  </p>
+                </div>
+                <Input
+                  value={cancelReason}
+                  onChange={(event) => setCancelReason(event.target.value)}
+                  placeholder="Cancellation reason (required)"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => void handleAdminCancel()}
+                  disabled={isCancellingRide}
+                >
+                  {isCancellingRide ? "Cancelling..." : "Cancel Ride"}
+                </Button>
+              </div>
+            ) : null}
           </div>
 
           <div className="flex-1">

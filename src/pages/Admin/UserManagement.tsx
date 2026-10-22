@@ -28,7 +28,7 @@ import {
   useSuspendDriverMutation,
 } from "@/redux/features/driver/driver.api";
 import type { Role } from "@/types/domain";
-import { extractArrayData } from "@/utils/apiResponse";
+import { extractArrayData, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatDateTime } from "@/utils/formatters";
 
 const statusOptions = [
@@ -84,8 +84,18 @@ export default function UserManagement() {
   const [roleFilter, setRoleFilter] = useState<Role | typeof ALL_ROLE_FILTER>(ALL_ROLE_FILTER);
 
   const { user: currentUser } = useAccount();
-  const { data: usersResponse, isLoading: usersLoading } = useGetAllUsersForAdminQuery(undefined);
-  const { data: driversResponse, isLoading: driversLoading } = useGetAllDriversQuery(undefined);
+  const {
+    data: usersResponse,
+    isLoading: usersLoading,
+    error: usersError,
+    refetch: refetchUsers,
+  } = useGetAllUsersForAdminQuery(undefined);
+  const {
+    data: driversResponse,
+    isLoading: driversLoading,
+    error: driversError,
+    refetch: refetchDrivers,
+  } = useGetAllDriversQuery(undefined);
   const runAction = useToastAction();
 
   const [blockUser, { isLoading: isBlocking }] = useBlockUserMutation();
@@ -253,6 +263,18 @@ export default function UserManagement() {
           <DataStateView
             isLoading={usersLoading || driversLoading}
             hasData={paginatedRows.length > 0}
+            errorMessage={
+              usersError || driversError
+                ? getApiErrorMessage(
+                    usersError || driversError,
+                    "Failed to load user management data.",
+                  )
+                : undefined
+            }
+            onRetry={() => {
+              void refetchUsers();
+              void refetchDrivers();
+            }}
             emptyMessage="No users match current filters."
           >
             <PaginatedDataTable
