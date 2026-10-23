@@ -1,6 +1,6 @@
 # GoMove — Frontend
 
-React 19 + Vite SPA for the GoMove ride-booking platform: public marketing pages plus role dashboards for riders, drivers and admins. Data and state run entirely through **Redux Toolkit + RTK Query** against the GoMove backend (cookie-based auth), styled with **Tailwind v4 + shadcn/ui** on one emerald token system, with Leaflet maps and OpenRouteService routing.
+React 19 + Vite SPA for the GoMove ride-booking platform: public marketing pages plus role dashboards for riders, drivers and admins. Data and state run entirely through **Redux Toolkit + RTK Query** against the GoMove backend (cookie-based auth), styled with **Tailwind v4 + shadcn/ui** on one token system, with Leaflet maps and direct-line route previews.
 
 > Companion backend: `ride-booking-system` (Express 5 + Mongoose 9). Its README documents the API list and the ride state machine enforced server-side.
 
@@ -8,9 +8,9 @@ React 19 + Vite SPA for the GoMove ride-booking platform: public marketing pages
 
 - **Marketing:** Home, About, Features, Pricing, Contact, FAQ — token-driven styling (light + dark), `.brand-gradient-*` utilities, `section-shell` layout.
 - **Auth:** login/register (React Hook Form + Zod), OTP verification, Google OAuth (deployed-only), one-time role setup for role-less accounts, session gates via `useAccount()` with a dedicated blocked/suspended page and role-aware redirects.
-- **Rider:** map-first booking — pickup auto-filled via geolocation, tap to set destination, live route polyline with a graceful no-route fallback (booking never depends on the route service: fares are computed server-side), 5-second status polling, **cancel until pickup** with conflict-aware toasts (the losing side of a race gets the backend's precise message), ride details with timeline + driver info, filterable history (server status/search/date + client-side fare range).
+- **Rider:** map-first booking — pickup auto-filled via geolocation or entered as coordinates, destination by map click or keyboard-accessible coordinate fields, direct-line route preview (booking never depends on a browser route service: road distance and fares are computed server-side), 5-second status polling, **cancel until pickup** with conflict-aware toasts (the losing side of a race gets the backend's precise message), ride details with timeline + driver info, server-side status/search/date/fare-range history.
 - **Driver:** profile gate → availability switch (needs admin approval to enable) → incoming-requests queue with Accept/Reject; a race loser sees the backend message (`already accepted by another driver` / `you already have an active ride`); active ride advances with one button that mirrors the server's transition map; earnings cards + chart.
-- **Admin:** analytics, ride oversight (server-side filters/search/pagination), user management (block/unblock riders, approve/suspend drivers), single-ride map view.
+- **Admin:** analytics, ride oversight (server-side filters/search/pagination), user management (server-side pagination/filters by role/status, block/unblock riders, approve/suspend drivers), single-ride map view.
 
 ## Tech stack
 
@@ -36,7 +36,7 @@ Useful accounts once the backend seed ran (`npm run seed` in the backend). The e
 | Rider  | rider@seed.gomove.app  |
 | Driver | driver@seed.gomove.app |
 
-`.env.example` documents every variable (demo-login vars are optional; `VITE_ORS_API_KEY` only controls client-side route drawing, not the booking flow). Real values stay in `.env.local` (gitignored) or in the hosting provider's environment settings.
+`.env.example` documents every variable (demo-login vars are optional). Real values stay in `.env.local` (gitignored) or in the hosting provider's environment settings. No ORS key ships in the browser; route previews are direct lines and the backend owns road distance and fare.
 
 ### Scripts
 
@@ -64,16 +64,16 @@ src/
                         auth, ride, driver, admin, stats
   hooks/                useAccount, useToastAction, useLogoutSession,
                         useListQueryState, useRoleRedirect
-  constants/            role, urls (ORS/OSM/auth), polling intervals, paths,
+  constants/            role, urls (OSM), polling intervals, paths,
                         rideStatus options
   types/                domain.ts (enums/statuses), ride.ts (shared helpers)
-  utils/                apiResponse (envelope parsing), mapRoute, formatters,
+  utils/                apiResponse (standard envelope), formatters,
                         formValidation, withAuth, generateRoutes
 ```
 
 ## Backend contract
 
-- Envelope: `{ statusCode, success, message, data, meta? }`; `utils/apiResponse.ts` unwraps single/double-nested payloads and reads messages from `message` or zod-style `errorSources[]`.
+- Envelope: `{ statusCode, success, message, data, meta? }`; `utils/apiResponse.ts` reads the top-level `data`/`meta` and reads messages from `message` or zod-style `errorSources[]`.
 - Booking posts GeoJSON points (`pickupLocation`, `destination`, `currentLocation`, coordinates `[lng, lat]`); the server validates coordinate ranges and rejects `same-location` or unrouteable requests instead of booking fare-0 rides.
 - Auth is cookie-based (`withCredentials`); a 401 surfaces as a re-login path (no silent refresh loop, by design).
 - Roles come from the server; every UI guard is convenience, not security (enforcement is the API's job — see the backend README).
@@ -89,11 +89,11 @@ All three are clean at the time of writing (0 errors; two upstream shadcn `react
 ## Deployment notes
 
 - Set `VITE_API_URL_PROD` to the deployed backend URL (including `/api/v1`); CORS and Google OAuth origins must match — see the backend repository's `docs/DEPLOYMENT.md`.
-- Keep real values in the provider's environment. `VITE_*` values are public in the built bundle: never put server-side secrets (including the backend ORS key) there. Demo-login defaults to off in production; enable it only for a demo deployment with rotating credentials.
+- Keep real values in the provider's environment. `VITE_*` values are public in the built bundle: never put server-side secrets there. Demo-login defaults to off in production; enable it only for a demo deployment with rotating credentials. Route previews are direct lines and no ORS key is required client-side.
 
 ## Known limitations (honest list)
 
 - Realtime is polling (no websockets); no ETA or live-driver-position streaming.
 - Payments are out of scope (cash-on-completion messaging in the UI).
 - Google OAuth and OTP email depend on the deployed backend environment; locally they degrade (OTP needs SMTP/Redis).
-- Address search/geocoding is not implemented — destinations are chosen on the map.
+- Address search/geocoding is not implemented — destinations are chosen on the map or entered as coordinates (keyboard-accessible).

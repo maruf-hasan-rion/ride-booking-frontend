@@ -112,17 +112,17 @@ const teamMembers = [
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-background to-emerald-100 dark:from-gray-900 dark:via-gray-950 dark:to-emerald-950">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-background to-brand-100 dark:from-gray-900 dark:via-gray-950 dark:to-brand-950">
       <section className="bg-background py-16 text-center dark:bg-gray-950 md:py-24">
         <div className="section-shell">
           <Badge
             variant="outline"
-            className="mb-4 border-emerald-700 bg-primary text-primary-foreground hover:bg-emerald-700"
+              className="mb-4 border-brand-700 bg-primary text-primary-foreground hover:bg-primary/90"
           >
             About Our Ride Platform
           </Badge>
           <motion.h1
-            className="mb-6 text-pretty text-3xl font-extrabold leading-tight tracking-tight text-primary dark:text-emerald-400 md:text-5xl"
+            className="mb-6 text-pretty text-3xl font-extrabold leading-tight tracking-tight text-primary dark:text-brand-400 md:text-5xl"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -142,7 +142,7 @@ const About = () => {
       <section className="bg-muted py-16 dark:bg-gray-900">
         <div className="section-shell">
           <div className="mb-12 text-center">
-            <Badge variant="outline" className="mb-4 border-emerald-500 text-primary">
+            <Badge variant="outline" className="mb-4 border-brand-500 text-primary">
               What We Offer
             </Badge>
             <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
@@ -162,7 +162,7 @@ const About = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: index * 0.08 }}
               >
-                <Card className="h-full bg-background text-center transition-shadow duration-300 hover:border-emerald-400 hover:shadow-lg dark:bg-gray-800">
+                <Card className="h-full bg-background text-center transition-shadow duration-300 hover:border-brand-400 hover:shadow-lg dark:bg-gray-800">
                   <CardContent className="p-6">
                     <div className="mb-4 flex justify-center">{feature.icon}</div>
                     <h3 className="mb-2 text-xl font-semibold text-foreground">{feature.title}</h3>
@@ -196,7 +196,7 @@ const About = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 rounded-2xl bg-gradient-to-br from-emerald-100/40 to-emerald-50/60 p-8 dark:from-emerald-900/30 dark:to-gray-800/30">
+          <div className="grid grid-cols-2 gap-6 rounded-2xl bg-gradient-to-br from-brand-100/40 to-brand-50/60 p-8 dark:from-brand-900/30 dark:to-gray-800/30">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="mb-2 text-3xl font-bold text-primary">
@@ -211,7 +211,7 @@ const About = () => {
 
       <section className="bg-muted py-16 dark:bg-gray-900 md:py-24">
         <div className="section-shell text-center">
-          <Badge variant="outline" className="mb-4 border-emerald-500 text-primary">
+          <Badge variant="outline" className="mb-4 border-brand-500 text-primary">
             Our Team
           </Badge>
           <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
@@ -224,13 +224,13 @@ const About = () => {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {teamMembers.map((member) => (
-              <Card key={member.name} className="bg-background text-center transition-shadow duration-300 hover:border-emerald-400 hover:shadow-lg dark:bg-gray-800">
+              <Card key={member.name} className="bg-background text-center transition-shadow duration-300 hover:border-brand-400 hover:shadow-lg dark:bg-gray-800">
                 <CardContent className="p-6">
                   <div className="mb-4 flex justify-center">
                     <img
                       src={member.image}
                       alt={member.name}
-                      className="h-24 w-24 rounded-full border-2 border-emerald-400 object-cover"
+                      className="h-24 w-24 rounded-full border-2 border-brand-400 object-cover"
                     />
                   </div>
                   <h3 className="mb-1 text-xl font-semibold text-foreground">{member.name}</h3>
@@ -239,12 +239,12 @@ const About = () => {
                   </p>
                   <p className="mb-4 text-sm text-muted-foreground">{member.bio}</p>
                   <div className="flex justify-center gap-3">
-                    <Button asChild variant="outline" size="sm" className="border-emerald-500 p-2 hover:bg-primary hover:text-primary-foreground">
+                    <Button asChild variant="outline" size="sm" className="border-brand-500 p-2 hover:bg-primary hover:text-primary-foreground">
                       <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
                         <Mail className="h-4 w-4" />
                       </a>
                     </Button>
-                    <Button asChild variant="outline" size="sm" className="border-emerald-500 p-2 hover:bg-primary hover:text-primary-foreground">
+                    <Button asChild variant="outline" size="sm" className="border-brand-500 p-2 hover:bg-primary hover:text-primary-foreground">
                       <a
                         href={member.linkedin}
                         target="_blank"
@@ -275,7 +275,7 @@ const About = () => {
               asChild
               variant="default"
               size="lg"
-              className="bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-105 hover:bg-emerald-700 hover:shadow-xl"
+              className="bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-105 hover:bg-primary/90 hover:shadow-xl"
             >
               <Link to="/login">
                 Book a Ride
@@ -286,7 +286,7 @@ const About = () => {
               asChild
               variant="outline"
               size="lg"
-              className="border-emerald-500 text-primary transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
+              className="border-brand-500 text-primary transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
             >
               <Link to="/login">Become a Driver</Link>
             </Button>

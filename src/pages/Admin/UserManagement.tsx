@@ -24,11 +24,14 @@ import {
 } from "@/redux/features/admin/admin.api";
 import {
   useApproveDriverMutation,
-  useGetAllDriversQuery,
   useSuspendDriverMutation,
 } from "@/redux/features/driver/driver.api";
 import type { Role } from "@/types/domain";
-import { extractArrayData, getApiErrorMessage } from "@/utils/apiResponse";
+import {
+  extractArrayData,
+  extractMeta,
+  getApiErrorMessage,
+} from "@/utils/apiResponse";
 import { formatDateTime } from "@/utils/formatters";
 
 const statusOptions = [
@@ -57,12 +60,10 @@ type AdminUser = {
   role: Role;
   isBlocked: boolean;
   status?: "ACTIVE" | "BLOCKED" | "SUSPENDED";
-};
-
-type DriverProfile = {
-  _id: string;
-  isApproved?: boolean;
-  user?: { _id?: string };
+  driverProfile?: {
+    _id?: string;
+    isApproved?: boolean;
+  } | null;
 };
 
 type AccountStatus = "ACTIVE" | "PENDING" | "BLOCKED" | "SUSPENDED";
@@ -75,13 +76,24 @@ type UserTableRow = {
   createdAt?: string;
   role: Role;
   isBlocked: boolean;
-  driverProfile?: DriverProfile;
+  driverProfile?: AdminUser["driverProfile"];
   accountStatus: AccountStatus;
 };
 
 export default function UserManagement() {
-  const { state, setState, resetFilters } = useListQueryState({ limit: 8 });
+  const { state, setState, query, resetFilters } = useListQueryState(
+    { limit: 8 },
+    { statusParamKey: "status" },
+  );
   const [roleFilter, setRoleFilter] = useState<Role | typeof ALL_ROLE_FILTER>(ALL_ROLE_FILTER);
+
+  const apiQuery = useMemo(
+    () => ({
+      ...query,
+      ...(roleFilter === ALL_ROLE_FILTER ? {} : { role: roleFilter }),
+    }),
+    [query, roleFilter],
+  );
 
   const { user: currentUser } = useAccount();
   const {
@@ -89,13 +101,7 @@ export default function UserManagement() {
     isLoading: usersLoading,
     error: usersError,
     refetch: refetchUsers,
-  } = useGetAllUsersForAdminQuery(undefined);
-  const {
-    data: driversResponse,
-    isLoading: driversLoading,
-    error: driversError,
-    refetch: refetchDrivers,
-  } = useGetAllDriversQuery(undefined);
+  } = useGetAllUsersForAdminQuery(apiQuery);
   const runAction = useToastAction();
 
   const [blockUser, { isLoading: isBlocking }] = useBlockUserMutation();
@@ -104,30 +110,24 @@ export default function UserManagement() {
   const [suspendDriver, { isLoading: isSuspending }] = useSuspendDriverMutation();
 
   const users = extractArrayData<AdminUser>(usersResponse);
-  const drivers = extractArrayData<DriverProfile>(driversResponse);
+  const totalPage = extractMeta(usersResponse)?.totalPage ?? 1;
 
-  const driverByUserId = useMemo(
-    () =>
-      new Map<string, DriverProfile>(
-        drivers
-          .filter((driver) => Boolean(driver.user?._id))
-          .map((driver) => [driver.user?._id as string, driver])
-      ),
-    [drivers]
-  );
+  useEffect(() => {
+    if (state.page > totalPage) {
+      setState((previous) => ({ ...previous, page: totalPage }));
+    }
+  }, [setState, state.page, totalPage]);
 
   const rows = useMemo<UserTableRow[]>(() => {
     return users.map((user) => {
-      const driverProfile = user.role === "DRIVER" ? driverByUserId.get(user._id) : undefined;
-
       let accountStatus: AccountStatus =
         user.status || (user.isBlocked ? "BLOCKED" : "ACTIVE");
 
       if (
         user.role === "DRIVER" &&
         accountStatus === "ACTIVE" &&
-        driverProfile &&
-        !driverProfile.isApproved
+        user.driverProfile &&
+        !user.driverProfile.isApproved
       ) {
         accountStatus = "PENDING";
       }
@@ -138,44 +138,10 @@ export default function UserManagement() {
 
       return {
         ...user,
-        driverProfile,
         accountStatus,
       };
     });
-  }, [driverByUserId, users]);
-
-  const filteredRows = useMemo(() => {
-    const searchTerm = state.searchTerm.trim().toLowerCase();
-
-    return rows.filter((user) => {
-      const createdAt = user.createdAt?.slice(0, 10) || "";
-
-      const matchesSearch =
-        !searchTerm ||
-        user.name?.toLowerCase().includes(searchTerm) ||
-        user.email?.toLowerCase().includes(searchTerm) ||
-        user.contactNo?.toLowerCase().includes(searchTerm);
-
-      const matchesDate = !state.dateSearch || createdAt === state.dateSearch;
-      const matchesStatus = !state.rideStatus || user.accountStatus === state.rideStatus;
-      const matchesRole = roleFilter === ALL_ROLE_FILTER || user.role === roleFilter;
-
-      return matchesSearch && matchesDate && matchesStatus && matchesRole;
-    });
-  }, [roleFilter, rows, state.dateSearch, state.rideStatus, state.searchTerm]);
-
-  const totalPage = Math.max(1, Math.ceil(filteredRows.length / state.limit));
-
-  useEffect(() => {
-    if (state.page > totalPage) {
-      setState((previous) => ({ ...previous, page: totalPage }));
-    }
-  }, [setState, state.page, totalPage]);
-
-  const paginatedRows = useMemo(() => {
-    const startIndex = (state.page - 1) * state.limit;
-    return filteredRows.slice(startIndex, startIndex + state.limit);
-  }, [filteredRows, state.limit, state.page]);
+  }, [users]);
 
   const isMutating = isBlocking || isUnblocking || isApproving || isSuspending;
   const currentUserId = currentUser?._id;
@@ -261,19 +227,18 @@ export default function UserManagement() {
         </CardHeader>
         <CardContent>
           <DataStateView
-            isLoading={usersLoading || driversLoading}
-            hasData={paginatedRows.length > 0}
+            isLoading={usersLoading}
+            hasData={rows.length > 0}
             errorMessage={
-              usersError || driversError
+              usersError
                 ? getApiErrorMessage(
-                    usersError || driversError,
+                    usersError,
                     "Failed to load user management data.",
                   )
                 : undefined
             }
             onRetry={() => {
               void refetchUsers();
-              void refetchDrivers();
             }}
             emptyMessage="No users match current filters."
           >
@@ -294,7 +259,7 @@ export default function UserManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedRows.map((user) => {
+                  {rows.map((user) => {
                     const isCurrentUser = user._id === currentUserId;
 
                     return (

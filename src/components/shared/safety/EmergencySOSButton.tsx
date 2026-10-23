@@ -92,7 +92,7 @@ export const EmergencySOSButton = ({
 
   const handleCallPolice = () => {
     window.location.href = `tel:${emergencyNumber}`;
-    toast.success("Calling emergency support.");
+    toast.info("Opening the dialer. Call emergency services directly if you are in danger.");
   };
 
   const getEmergencyMessage = (coordinates: Coordinates | null) => {
@@ -113,7 +113,7 @@ export const EmergencySOSButton = ({
     const coordinates = await ensureLocation();
     const message = getEmergencyMessage(coordinates);
     window.location.href = `sms:${contact.phone}?body=${encodeURIComponent(message)}`;
-    toast.success(`Emergency contact notified: ${contact.name}`);
+    toast.info(`SMS app opened for ${contact.name}. Send the message to alert them.`);
     setIsOpen(false);
   };
 
@@ -134,7 +134,7 @@ export const EmergencySOSButton = ({
     }
 
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
-    toast.success(`Opening WhatsApp for ${contact.name}.`);
+    toast.info(`WhatsApp opened for ${contact.name}. Send the message to alert them.`);
     setIsOpen(false);
   };
 
@@ -152,7 +152,7 @@ export const EmergencySOSButton = ({
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-        toast.success("Location shared successfully.");
+        toast.info("Share sheet opened. Confirm the share to send your location.");
       } catch {
         toast.error("Unable to share location.");
       }
@@ -162,7 +162,7 @@ export const EmergencySOSButton = ({
 
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Location link copied to clipboard.");
+      toast.info("Location link copied. Send it to your contact.");
       setIsOpen(false);
     } catch {
       toast.error("Unable to copy location link.");
@@ -188,12 +188,13 @@ export const EmergencySOSButton = ({
               Emergency SOS
             </DialogTitle>
             <DialogDescription>
-              Use one of the options below to get help quickly.
+              Open an emergency call or a pre-filled message. GoMove does not
+              dispatch emergency services or confirm delivery.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3">
-            <div className="rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground">
+            <div className="rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground" aria-live="polite">
               {isLocating ? "Detecting your location..." : location ? "Location detected." : "Location not detected yet."}
               <div className="mt-2">
                 <Link to={getPathByRole(role, SAFETY_PATH_BY_ROLE)} className="font-medium text-primary underline">
@@ -209,7 +210,7 @@ export const EmergencySOSButton = ({
 
             <Button type="button" onClick={handleNotifyContactBySms} className="w-full justify-start gap-2">
               <MessageSquare className="h-4 w-4" />
-              Notify Emergency Contact (SMS)
+              Open SMS with location
             </Button>
 
             <Button
@@ -219,7 +220,7 @@ export const EmergencySOSButton = ({
               variant="outline"
             >
               <MessageSquare className="h-4 w-4" />
-              Notify Emergency Contact (WhatsApp)
+              Open WhatsApp with location
             </Button>
 
             <Button
@@ -229,14 +230,16 @@ export const EmergencySOSButton = ({
               variant="outline"
             >
               <Share2 className="h-4 w-4" />
-              Share Live Location
+              Share location link
             </Button>
           </div>
 
           <Separator />
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin className="h-4 w-4" />
-            SOS appears only during active rides for safety support.
+            SOS appears only during active rides. GoMove does not dispatch
+            emergency services; call local emergency services if you are in
+            immediate danger.
           </p>
         </DialogContent>
       </Dialog>

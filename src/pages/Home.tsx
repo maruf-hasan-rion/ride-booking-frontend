@@ -38,11 +38,11 @@ const Home = () => {
 // Hero Section
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 py-16 sm:py-20 md:py-24 lg:py-28 dark:from-gray-900 dark:via-emerald-950/20 dark:to-gray-900">
+    <section className="relative overflow-hidden bg-gradient-to-br from-brand-50 via-brand-50 to-brand-50 py-16 sm:py-20 md:py-24 lg:py-28 dark:from-gray-900 dark:via-brand-950/20 dark:to-gray-900">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-400/20 rounded-full blur-3xl"></div>
       </div>
 
       <div className="section-shell relative z-10">
@@ -74,14 +74,14 @@ const HeroSection = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
               <Link
                 to="/login"
-                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r brand-gradient-bg text-primary-foreground font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r brand-gradient-bg text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
               >
                 Book a Ride
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 to="/login"
-                className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-gray-800 text-foreground font-semibold rounded-xl border-2 border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-gray-800 text-foreground font-semibold rounded-xl border-2 border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950/20 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 Become a Driver
                 <Car className="w-5 h-5" />
@@ -120,7 +120,7 @@ const HeroSection = () => {
           {/* Right Content - Mock Phone */}
           <div className="relative">
             <div className="relative mx-auto w-full max-w-md">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur-2xl opacity-20"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-500 to-brand-500 rounded-3xl blur-2xl opacity-20"></div>
               <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 shadow-2xl border border-border dark:border-gray-700">
                 <div className="bg-white dark:bg-gray-950 rounded-2xl p-6 space-y-4">
                   <div className="flex items-center justify-between">
@@ -128,7 +128,7 @@ const HeroSection = () => {
                     <Navigation className="w-4 h-4 text-primary" />
                   </div>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-brand-50 dark:bg-brand-950/30 rounded-lg">
                       <div className="w-3 h-3 bg-primary rounded-full"></div>
                       <input
                         type="text" 
@@ -150,7 +150,7 @@ const HeroSection = () => {
                   <div className="pt-4">
                     <Link
                       to="/login"
-                      className="block w-full rounded-lg bg-gradient-to-r brand-gradient-bg py-3 text-center font-medium text-primary-foreground transition-all hover:shadow-lg"
+                      className="block w-full rounded-lg bg-gradient-to-r brand-gradient-bg py-3 text-center font-medium text-white transition-all hover:shadow-lg"
                     >
                       Find Ride
                     </Link>
@@ -161,7 +161,7 @@ const HeroSection = () => {
                       <div className="text-xs text-muted-foreground">Economy</div>
                     </div>
                     <div className="flex-1 text-center p-3 bg-muted dark:bg-gray-800 rounded-lg">
-                      <Car className="w-6 h-6 mx-auto mb-1 text-teal-600" />
+                      <Car className="w-6 h-6 mx-auto mb-1 text-brand-600" />
                       <div className="text-xs text-muted-foreground">Comfort</div>
                     </div>
                     <div className="flex-1 text-center p-3 bg-muted dark:bg-gray-800 rounded-lg">
@@ -186,25 +186,25 @@ const HowItWorks = () => {
       icon: <Smartphone className="w-8 h-8" />,
       title: "Download the App",
       description: "Get started in minutes with our easy-to-use mobile app",
-      color: "from-emerald-500 to-emerald-600"
+      color: "from-brand-500 to-brand-600"
     },
     {
       icon: <MapPin className="w-8 h-8" />,
       title: "Set Your Destination",
       description: "Enter pickup and drop-off locations with just a few taps",
-      color: "from-teal-500 to-teal-600"
+      color: "from-brand-500 to-brand-600"
     },
     {
       icon: <Car className="w-8 h-8" />,
       title: "Get Matched",
       description: "We'll connect you with a nearby driver in seconds",
-      color: "from-green-500 to-green-600"
+      color: "from-brand-500 to-brand-600"
     },
     {
       icon: <CheckCircle2 className="w-8 h-8" />,
       title: "Enjoy Your Ride",
       description: "Track your driver in real-time and arrive safely",
-      color: "from-emerald-600 to-teal-600"
+      color: "from-brand-600 to-brand-600"
     }
   ];
 
@@ -224,7 +224,7 @@ const HowItWorks = () => {
           {steps.map((step, index) => (
             <div key={index} className="relative">
               <div className="text-center">
-                <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-r ${step.color} flex items-center justify-center text-primary-foreground mb-4 shadow-lg`}>
+                <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-r ${step.color} flex items-center justify-center text-white mb-4 shadow-lg`}>
                   {step.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">
@@ -249,42 +249,42 @@ const Features = () => {
       title: "Real-Time Ride Booking",
       description: "Book your ride instantly with live driver tracking and estimated arrival time.",
       icon: <Car className="w-6 h-6" />,
-      color: "from-emerald-500 to-emerald-600"
+      color: "from-brand-500 to-brand-600"
     },
     {
       title: "Smart Route Optimization",
       description: "AI-powered navigation adapts to traffic for the fastest routes.",
       icon: <MapPin className="w-6 h-6" />,
-      color: "from-teal-500 to-teal-600"
+      color: "from-brand-500 to-brand-600"
     },
     {
       title: "Multiple Payment Options",
       description: "Pay with cash, card, or mobile wallet. Split fares with friends easily.",
       icon: <DollarSign className="w-6 h-6" />,
-      color: "from-green-500 to-green-600"
+      color: "from-brand-500 to-brand-600"
     },
     {
       title: "Schedule in Advance",
       description: "Plan ahead by scheduling rides up to 7 days in advance.",
       icon: <Clock className="w-6 h-6" />,
-      color: "from-emerald-600 to-teal-600"
+      color: "from-brand-600 to-brand-600"
     },
     {
       title: "Ride History & Receipts",
       description: "Access complete trip history with detailed receipts and ratings.",
       icon: <Users className="w-6 h-6" />,
-      color: "from-teal-600 to-green-600"
+      color: "from-brand-600 to-brand-600"
     },
     {
       title: "Safety First",
       description: "Verified drivers, 24/7 support, and emergency assistance for peace of mind.",
       icon: <Shield className="w-6 h-6" />,
-      color: "from-green-600 to-emerald-600"
+      color: "from-brand-600 to-brand-600"
     }
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-gray-900 dark:to-emerald-950/10">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-brand-50/50 to-brand-50/50 dark:from-gray-900 dark:to-brand-950/10">
       <div className="section-shell">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -299,12 +299,12 @@ const Features = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="group bg-card rounded-2xl p-6 border border-border hover:border-primary/40 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-xl"
+              className="group bg-card rounded-2xl p-6 border border-border hover:border-primary/40 dark:hover:border-brand-700 transition-all duration-300 hover:shadow-xl"
             >
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-primary-foreground mb-4`}>
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-white mb-4`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary dark:group-hover:text-emerald-400 transition-colors">
+              <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary dark:group-hover:text-brand-400 transition-colors">
                 {feature.title}
               </h3>
               <p className="text-muted-foreground">
@@ -327,7 +327,7 @@ const VehicleTypes = () => {
       price: "BDT 50+",
       features: ["Affordable rates", "Comfortable sedans", "4 seats", "AC included"],
       icon: <Car className="w-12 h-12" />,
-      color: "from-emerald-500 to-emerald-600",
+      color: "from-brand-500 to-brand-600",
       popular: false
     },
     {
@@ -336,7 +336,7 @@ const VehicleTypes = () => {
       price: "BDT 80+",
       features: ["Mid-range pricing", "Premium vehicles", "4 seats", "Extra legroom"],
       icon: <Car className="w-12 h-12" />,
-      color: "from-teal-500 to-teal-600",
+      color: "from-brand-500 to-brand-600",
       popular: true
     },
     {
@@ -345,7 +345,7 @@ const VehicleTypes = () => {
       price: "BDT 150+",
       features: ["Top-tier comfort", "Luxury cars", "4 seats", "Professional drivers"],
       icon: <Car className="w-12 h-12" />,
-      color: "from-emerald-600 to-teal-600",
+      color: "from-brand-600 to-brand-600",
       popular: false
     }
   ];
@@ -368,17 +368,17 @@ const VehicleTypes = () => {
               key={index}
               className={`relative bg-card rounded-2xl p-8 border-2 ${
                 vehicle.popular 
-                  ? "border-emerald-500 shadow-2xl lg:scale-105" 
+                  ? "border-brand-500 shadow-2xl lg:scale-105" 
                   : 'border-border'
               } transition-all duration-300 hover:shadow-xl`}
             >
               {vehicle.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r brand-gradient-bg text-primary-foreground text-sm font-semibold rounded-full">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r brand-gradient-bg text-white text-sm font-semibold rounded-full">
                   Most Popular
                 </div>
               )}
 
-              <div className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-r ${vehicle.color} flex items-center justify-center text-primary-foreground mb-6`}>
+              <div className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-r ${vehicle.color} flex items-center justify-center text-white mb-6`}>
                 {vehicle.icon}
               </div>
 
@@ -409,8 +409,8 @@ const VehicleTypes = () => {
                 to="/login"
                 className={`block w-full rounded-xl py-3 text-center font-semibold transition-all duration-300 ${
                   vehicle.popular
-                    ? "bg-gradient-to-r brand-gradient-bg text-primary-foreground hover:shadow-lg"
-                    : "bg-muted text-foreground hover:bg-emerald-50 dark:bg-gray-800 dark:text-primary-foreground dark:hover:bg-emerald-950/20"
+                    ? "bg-gradient-to-r brand-gradient-bg text-white hover:shadow-lg"
+                    : "bg-muted text-foreground hover:bg-brand-50 dark:bg-gray-800 dark:text-white dark:hover:bg-brand-950/20"
                 }`}
               >
                 Select {vehicle.name}
@@ -453,13 +453,13 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-600 to-teal-700 text-primary-foreground">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-brand-600 to-brand-700 text-white">
       <div className="section-shell">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Why Riders Choose Us
           </h2>
-          <p className="text-lg text-emerald-100 max-w-2xl mx-auto">
+          <p className="text-lg text-brand-100 max-w-2xl mx-auto">
             Join thousands of satisfied riders who trust us for their daily commute.
           </p>
         </div>
@@ -472,7 +472,7 @@ const WhyChooseUs = () => {
               </div>
               <div className="text-3xl font-bold mb-2">{reason.stat}</div>
               <h3 className="text-xl font-semibold mb-2">{reason.title}</h3>
-              <p className="text-emerald-100">{reason.description}</p>
+              <p className="text-brand-100">{reason.description}</p>
             </div>
           ))}
         </div>
@@ -520,8 +520,8 @@ const SafetyFirst = () => {
           </div>
 
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur-3xl opacity-20"></div>
-            <div className="relative bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/50 dark:to-teal-950/30 rounded-3xl p-8 border border-primary/25">
+            <div className="absolute inset-0 bg-gradient-to-r from-brand-500 to-brand-500 rounded-3xl blur-3xl opacity-20"></div>
+            <div className="relative bg-gradient-to-br from-brand-100 to-brand-100 dark:from-brand-950/50 dark:to-brand-950/30 rounded-3xl p-8 border border-primary/25">
               <div className="grid grid-cols-2 gap-6">
                 {[
                   { icon: <Shield className="w-8 h-8" />, label: "Verified Drivers", value: "100%" },
@@ -606,7 +606,7 @@ const Testimonials = () => {
   const activeItem = testimonials[activeIndex];
 
   return (
-    <section className="bg-gradient-to-br from-emerald-50/50 to-teal-50/50 py-16 dark:from-gray-900 dark:to-emerald-950/10 md:py-20">
+    <section className="bg-gradient-to-br from-brand-50/50 to-brand-50/50 py-16 dark:from-gray-900 dark:to-brand-950/10 md:py-20">
       <div className="section-shell">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
@@ -627,7 +627,7 @@ const Testimonials = () => {
               <p className="font-semibold text-foreground">{activeItem.name}</p>
               <p className="text-sm text-muted-foreground">{activeItem.role}</p>
             </div>
-            <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-primary dark:bg-emerald-900/40 dark:text-emerald-300">
+            <span className="rounded-full bg-brand-100 px-3 py-1 text-sm font-semibold text-primary dark:bg-brand-900/40 dark:text-brand-300">
               {activeItem.rating}
             </span>
           </div>
@@ -640,7 +640,7 @@ const Testimonials = () => {
                   type="button"
                   onClick={() => setActiveIndex(index)}
                   className={`h-2.5 w-2.5 rounded-full transition ${
-                    index === activeIndex ? "bg-primary" : "bg-emerald-200 dark:bg-emerald-900"
+                    index === activeIndex ? "bg-primary" : "bg-brand-200 dark:bg-brand-900"
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
@@ -675,19 +675,19 @@ const Testimonials = () => {
 // Download App
 const DownloadApp = () => {
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-r from-emerald-600 to-teal-700">
+    <section className="py-16 md:py-20 bg-gradient-to-r from-brand-600 to-brand-700">
       <div className="section-shell">
-        <div className="max-w-4xl mx-auto text-center text-primary-foreground">
+        <div className="max-w-4xl mx-auto text-center text-white">
           <Smartphone className="w-16 h-16 mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Download Our App Today
           </h2>
-          <p className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-brand-100 mb-8 max-w-2xl mx-auto">
             Get the app and start riding in minutes. Available on iOS and Android.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-primary transition-all duration-300 hover:bg-emerald-50">
+            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-primary transition-all duration-300 hover:bg-brand-50">
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>
@@ -697,7 +697,7 @@ const DownloadApp = () => {
               </div>
             </Link>
 
-            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-primary transition-all duration-300 hover:bg-emerald-50">
+            <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-semibold text-primary transition-all duration-300 hover:bg-brand-50">
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
               </svg>

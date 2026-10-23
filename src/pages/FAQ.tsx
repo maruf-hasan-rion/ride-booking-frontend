@@ -89,13 +89,13 @@ const Faq = () => {
   });
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-emerald-950/20">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-brand-50/50 via-white to-brand-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-brand-950/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-12">
           {/* Header Section */}
           <div className="mx-auto flex max-w-2xl flex-col text-center">
             <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-gradient-to-r brand-gradient-bg flex items-center justify-center">
-              <HelpCircle className="w-7 h-7 text-primary-foreground" />
+              <HelpCircle className="w-7 h-7 text-white" />
             </div>
             <h1 className="mb-4 text-3xl md:text-4xl font-bold brand-gradient-text">
               {heading}
@@ -116,7 +116,7 @@ const Faq = () => {
               {filteredFaqItems.map((item) => (
                 <div
                   key={item.id}
-                  className="border border-border rounded-xl bg-card overflow-hidden hover:border-primary/40 dark:hover:border-emerald-700 transition-all duration-300 hover:shadow-lg"
+                  className="border border-border rounded-xl bg-card overflow-hidden hover:border-primary/40 dark:hover:border-brand-700 transition-all duration-300 hover:shadow-lg"
                 >
                   <button
                     type="button"
@@ -125,7 +125,7 @@ const Faq = () => {
                     aria-expanded={openItem === item.id}
                     aria-controls={`${item.id}-panel`}
                   >
-                    <span className="font-medium text-foreground dark:text-gray-100 text-sm md:text-base pr-4 group-hover:text-primary dark:group-hover:text-emerald-400 transition-colors">
+                    <span className="font-medium text-foreground dark:text-gray-100 text-sm md:text-base pr-4 group-hover:text-primary dark:group-hover:text-brand-400 transition-colors">
                       {item.question}
                     </span>
                     <ChevronDown
@@ -142,7 +142,7 @@ const Faq = () => {
                     }`}
                   >
                     <div className="px-6 pb-4 pt-0">
-                      <div className="h-px bg-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-800 dark:to-teal-800 mb-4"></div>
+                      <div className="h-px bg-gradient-to-r from-brand-200 to-brand-200 dark:from-brand-800 dark:to-brand-800 mb-4"></div>
                       <p className="text-muted-foreground text-sm leading-relaxed">
                         {item.answer}
                       </p>
@@ -160,7 +160,7 @@ const Faq = () => {
 
           {/* CTA Section */}
           <div className="mx-auto max-w-2xl">
-            <div className="bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-950/40 dark:to-teal-950/30 rounded-2xl p-8 border border-primary/25/50 text-center">
+            <div className="bg-gradient-to-r from-brand-100 to-brand-100 dark:from-brand-950/40 dark:to-brand-950/30 rounded-2xl p-8 border border-primary/25 text-center">
               <h3 className="text-xl font-semibold text-foreground dark:text-gray-100 mb-2">
                 Still have questions?
               </h3>

@@ -54,12 +54,12 @@ export default function UserOverview() {
 
   return (
     <div className="space-y-6">
-      <Card className="brand-gradient-bg border-0 text-primary-foreground">
+      <Card className="brand-gradient-bg border-0 text-white">
         <CardContent className="p-6 md:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-2xl font-bold md:text-3xl">Welcome back, {firstName}!</h2>
-              <p className="text-primary-foreground/80">
+              <p className="text-white/80">
                 Member since {profile?.createdAt ? formatDateTime(profile.createdAt) : "N/A"}
               </p>
             </div>

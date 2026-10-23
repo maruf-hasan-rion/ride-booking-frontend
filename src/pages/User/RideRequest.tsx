@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -16,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { StatusBadge } from "@/components/shared/dashboard/StatusBadge";
 import { DataStateView } from "@/components/shared/dashboard/DataStateView";
 import { EmergencySOSButton } from "@/components/shared/safety/EmergencySOSButton";
-import config from "@/config";
 import {
   configureLeafletDefaultMarker,
   destinationMarkerIcon,
@@ -41,7 +40,6 @@ import {
 import { OSM_TILE_URL } from "@/constants/urls";
 import { extractData } from "@/utils/apiResponse";
 import { formatCurrencyBDT } from "@/utils/formatters";
-import { fetchDrivingRoutePolyline } from "@/utils/mapRoute";
 import { POLL_INTERVALS } from "@/constants/polling";
 
 type Coordinate = [number, number];
@@ -91,11 +89,6 @@ const createIdempotencyKey = () =>
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-const formatCoordinate = (coordinate: Coordinate | null) => {
-  if (!coordinate) return "";
-  return `${coordinate[0].toFixed(5)}, ${coordinate[1].toFixed(5)}`;
-};
-
 function DestinationPicker({
   locked,
   onSelect,
@@ -115,16 +108,95 @@ function DestinationPicker({
 
 function LocationField({
   label,
+  description,
   value,
+  onChange,
+  disabled,
 }: {
   label: string;
-  value: string;
+  description: string;
+  value: Coordinate | null;
+  onChange: (coordinate: Coordinate) => void;
+  disabled?: boolean;
 }) {
+  const id = useId();
+  const [latitude, setLatitude] = useState(value ? value[0].toFixed(6) : "");
+  const [longitude, setLongitude] = useState(value ? value[1].toFixed(6) : "");
+
+  useEffect(() => {
+    setLatitude(value ? value[0].toFixed(6) : "");
+    setLongitude(value ? value[1].toFixed(6) : "");
+  }, [value]);
+
+  const applyCoordinate = () => {
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lng) ||
+      lat < -90 ||
+      lat > 90 ||
+      lng < -180 ||
+      lng > 180
+    ) {
+      toast.error("Enter a valid latitude (-90 to 90) and longitude (-180 to 180).");
+      return;
+    }
+
+    onChange([lat, lng]);
+  };
+
   return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <Input value={value} readOnly placeholder="Waiting for map selection" />
-    </div>
+    <fieldset className="space-y-2">
+      <legend className="text-sm font-medium">{label}</legend>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor={`${id}-lat`}>Latitude</Label>
+          <Input
+            id={`${id}-lat`}
+            inputMode="decimal"
+            value={latitude}
+            onChange={(event) => setLatitude(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applyCoordinate();
+              }
+            }}
+            placeholder="23.8103"
+            disabled={disabled}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor={`${id}-lng`}>Longitude</Label>
+          <Input
+            id={`${id}-lng`}
+            inputMode="decimal"
+            value={longitude}
+            onChange={(event) => setLongitude(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applyCoordinate();
+              }
+            }}
+            placeholder="90.4125"
+            disabled={disabled}
+          />
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">{description}</p>
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        onClick={applyCoordinate}
+        disabled={disabled || !latitude.trim() || !longitude.trim()}
+      >
+        Apply {label}
+      </Button>
+    </fieldset>
   );
 }
 
@@ -138,6 +210,7 @@ export default function RideRequest() {
   const [routeCoordinates, setRouteCoordinates] = useState<Coordinate[]>([]);
   const [distanceKm, setDistanceKm] = useState<number>(0);
   const [fare, setFare] = useState<number>(0);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const [requestRide, { isLoading: isRequestingRide }] = useRideRequestMutation();
   const [cancelRide, { isLoading: isCancellingRide }] = useCancelRideMutation();
@@ -214,7 +287,9 @@ export default function RideRequest() {
 
   const syncCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported in your browser.");
+      const message = "Geolocation is not supported. Enter pickup coordinates manually.";
+      setLocationError(message);
+      toast.error(message);
       return;
     }
 
@@ -227,10 +302,14 @@ export default function RideRequest() {
 
         setPickup(coordinate);
         setCurrentLocation(coordinate);
+        setLocationError(null);
         resetIdempotencyKey();
       },
       () => {
-        toast.error("Unable to access your current location.");
+        const message =
+          "Location permission denied or unavailable. Enter pickup coordinates manually.";
+        setLocationError(message);
+        toast.error(message);
       }
     );
   }, [resetIdempotencyKey]);
@@ -242,38 +321,20 @@ export default function RideRequest() {
   }, [hasActiveRide, pickup, syncCurrentLocation]);
 
   useEffect(() => {
-    const controller = new AbortController();
+    if (!pickup || !destination) {
+      setRouteCoordinates([]);
+      return;
+    }
 
-    const resolveRoute = async () => {
-      if (!pickup || !destination) {
-        setRouteCoordinates([]);
-        return;
-      }
+    // No client-side ORS call: the key must never ship in the bundle. The
+    // straight line is only a visual preview; the server computes the road fare.
+    setRouteCoordinates([pickup, destination]);
 
-      const routeResult = await fetchDrivingRoutePolyline({
-        pickup,
-        destination,
-        orsApiKey: config.orsApiKey,
-        signal: controller.signal,
-      });
-
-      if (controller.signal.aborted) {
-        return;
-      }
-
-      setRouteCoordinates(routeResult.coordinates);
-
-      if (!hasActiveRide) {
-        const nextDistance =
-          routeResult.distanceKm ?? calculateStraightDistanceKm(pickup, destination);
-        setDistanceKm(nextDistance);
-        setFare(calculateFare(nextDistance));
-      }
-    };
-
-    void resolveRoute();
-
-    return () => controller.abort();
+    if (!hasActiveRide) {
+      const nextDistance = calculateStraightDistanceKm(pickup, destination);
+      setDistanceKm(nextDistance);
+      setFare(calculateFare(nextDistance));
+    }
   }, [pickup, destination, hasActiveRide]);
 
   const bookRide = async () => {
@@ -366,11 +427,16 @@ export default function RideRequest() {
           <CardHeader>
             <CardTitle>Ride Map</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Tap on the map to set destination. Pickup is your current location.
+              Click the map to set destination, or enter coordinates in the form.
+              Pickup auto-fills from geolocation when available.
             </p>
           </CardHeader>
           <CardContent>
-            <div className="h-[340px] w-full overflow-hidden rounded-lg border md:h-[420px]">
+            <div
+              className="h-[340px] w-full overflow-hidden rounded-lg border md:h-[420px]"
+              role="region"
+              aria-label="Ride map preview. Use the coordinate fields in the form for keyboard input."
+            >
               <MapContainer center={mapCenter} zoom={13} className="h-full w-full">
                 <TileLayer
                   url={OSM_TILE_URL}
@@ -406,18 +472,38 @@ export default function RideRequest() {
             <CardContent className="space-y-4">
               <LocationField
                 label="Pickup Coordinates"
-                value={formatCoordinate(pickup)}
+                description="Auto-filled from geolocation, or enter latitude and longitude manually."
+                value={pickup}
+                disabled={hasActiveRide}
+                onChange={(coordinate) => {
+                  setPickup(coordinate);
+                  setCurrentLocation(coordinate);
+                  setLocationError(null);
+                  resetIdempotencyKey();
+                }}
               />
               <LocationField
                 label="Destination Coordinates"
-                value={formatCoordinate(destination)}
+                description="Click the map or enter latitude and longitude manually."
+                value={destination}
+                disabled={hasActiveRide}
+                onChange={(coordinate) => {
+                  setDestination(coordinate);
+                  resetIdempotencyKey();
+                }}
               />
 
+              {locationError ? (
+                <p role="status" aria-live="polite" className="text-sm text-destructive">
+                  {locationError}
+                </p>
+              ) : null}
+
               <Button variant="outline" className="w-full" onClick={syncCurrentLocation}>
-                Use Current Location
+                Use Current Location (optional)
               </Button>
 
-              <div className="rounded-lg border bg-muted/40 p-3 text-sm">
+              <div className="rounded-lg border bg-muted/40 p-3 text-sm" aria-live="polite">
                 <p className="font-medium text-foreground">Fare Estimation</p>
                 <p className="text-muted-foreground">
                   Distance: {distanceKm.toFixed(2)} km
@@ -426,15 +512,21 @@ export default function RideRequest() {
                   Estimated Fare: {formatCurrencyBDT(fare)}
                 </p>
                 <p className="text-muted-xs text-muted-foreground">
-                  Fares cover the road trip only; payment is settled in cash on
-                  completion.
+                  Preview uses a direct line; the server calculates the final road
+                  fare. Payment is settled in cash on completion.
                 </p>
               </div>
 
               <Button
                 className="w-full"
                 onClick={bookRide}
-                disabled={hasActiveRide || !pickup || !destination || isRequestingRide}
+                disabled={
+                  hasActiveRide ||
+                  !pickup ||
+                  !destination ||
+                  !currentLocation ||
+                  isRequestingRide
+                }
               >
                 {isRequestingRide ? "Requesting..." : "Request Ride"}
               </Button>

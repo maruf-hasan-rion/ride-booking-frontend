@@ -50,11 +50,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {/* Header */}
       <SidebarHeader>
         <Link to="/" className="flex items-center gap-2 p-2.5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 flex items-center justify-center">
             <Car className="w-6 h-6 text-white" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-emerald-500 text-xl font-bold">GoMove</h2>
+            <h2 className="text-brand-500 text-xl font-bold">GoMove</h2>
             <span className="text-xs text-muted-foreground">
               {user?.role || "USER"} PORTAL
             </span>
@@ -76,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.icon && <item.icon className="w-4 h-4" />}
                         <span>{item.title}</span>
                         {item.badge && (
-                          <Badge className="ml-auto bg-emerald-500 hover:bg-emerald-600">
+                          <Badge className="ml-auto bg-brand-500 hover:bg-brand-600">
                             {item.badge}
                           </Badge>
                         )}
@@ -95,7 +95,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <div className="p-2 space-y-2">
           <Link to={profilePath} className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent">
             <Avatar>
-              <AvatarFallback className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+              <AvatarFallback className="bg-gradient-to-r from-brand-500 to-brand-600 text-white">
                 {userInitial}
               </AvatarFallback>
             </Avatar>

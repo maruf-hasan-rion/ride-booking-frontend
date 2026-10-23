@@ -160,7 +160,8 @@ export const EmergencyContactsSettings = ({
             {editingId ? "Update Contact" : "Add Contact"}
           </CardTitle>
           <CardDescription>
-            Keep at least one trusted person for quick SOS alerts.
+            Keep at least one trusted person for quick SOS messages. Contacts are
+            stored on this device for this account only.
           </CardDescription>
         </CardHeader>
         <CardContent>

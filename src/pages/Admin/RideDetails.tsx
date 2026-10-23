@@ -24,8 +24,6 @@ import { StatusBadge } from "@/components/shared/dashboard/StatusBadge";
 import { configureLeafletDefaultMarker } from "@/lib/leaflet";
 import { extractData, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatDateTime } from "@/utils/formatters";
-import { fetchDrivingRoutePolyline } from "@/utils/mapRoute";
-import config from "@/config";
 
 type Coordinate = [number, number];
 
@@ -51,7 +49,6 @@ export default function RideDetails() {
       skip: !id,
       pollingInterval: POLL_INTERVALS.ADMIN_RIDE_DETAIL,
     });
-  const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
   const [cancelReason, setCancelReason] = useState("");
   const [adminCancelRide, { isLoading: isCancellingRide }] =
     useAdminCancelRideMutation();
@@ -85,31 +82,12 @@ export default function RideDetails() {
     return [destinationLat, destinationLng];
   }, [destinationLng, destinationLat]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const resolveRoute = async () => {
-      if (!pickup || !destination) {
-        setRouteCoords([]);
-        return;
-      }
-
-      const route = await fetchDrivingRoutePolyline({
-        pickup,
-        destination,
-        orsApiKey: config.orsApiKey,
-        signal: controller.signal,
-      });
-
-      if (!controller.signal.aborted) {
-        setRouteCoords(route.coordinates);
-      }
-    };
-
-    void resolveRoute();
-
-    return () => controller.abort();
-  }, [pickup, destination]);
+  // Direct-line preview only. The API key stays server-side; fare and road
+  // distance come from the backend.
+  const routeCoords = useMemo<Coordinate[]>(
+    () => (pickup && destination ? [pickup, destination] : []),
+    [pickup, destination],
+  );
 
   const driverInfo = useMemo(() => {
     const details = getDriverDetails(ride ?? null);

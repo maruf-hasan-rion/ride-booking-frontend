@@ -208,7 +208,7 @@ export function LoginForm({
           onClick={() => window.open(`${config.baseUrl}/auth/google`, "_self")}
           type="button"
           variant="outline"
-          className="w-full cursor-pointer border-primary/40 hover:border-emerald-400 hover:text-primary"
+          className="w-full cursor-pointer border-primary/40 hover:border-brand-400 hover:text-primary"
         >
           Login with Google
         </Button>

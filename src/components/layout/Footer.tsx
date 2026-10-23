@@ -62,7 +62,7 @@ export default function Footer() {
                     <li key={`${group.title}-${link.href}-${link.label}`}>
                       <Link
                         to={link.href}
-                        className="text-foreground/85 transition hover:text-emerald-600 dark:hover:text-emerald-400"
+                        className="text-foreground/85 transition hover:text-brand-600 dark:hover:text-brand-400"
                       >
                         {link.label}
                       </Link>

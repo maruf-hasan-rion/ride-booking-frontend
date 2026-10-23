@@ -118,10 +118,10 @@ const roleSections: RoleSection[] = [
 
 export default function Features() {
   return (
-    <section className="bg-gradient-to-br from-emerald-50/30 via-background to-teal-50/30 py-16 md:py-24">
+    <section className="bg-gradient-to-br from-brand-50/30 via-background to-brand-50/30 py-16 md:py-24">
       <div className="section-shell space-y-12">
         <div className="mx-auto max-w-3xl text-center">
-          <Badge className="mb-4 brand-gradient-bg text-primary-foreground">Platform Capabilities</Badge>
+          <Badge className="mb-4 brand-gradient-bg text-white">Platform Capabilities</Badge>
           <h1 className="text-3xl font-bold md:text-4xl lg:text-5xl">Features by Role</h1>
           <p className="mt-4 text-lg text-muted-foreground">
             Explore how GoMove supports Riders, Drivers, and Admins through consistent workflows and safe, real-time operations.
@@ -140,7 +140,7 @@ export default function Features() {
                   <p className="mt-2 max-w-3xl text-muted-foreground">{section.summary}</p>
                 </div>
 
-                <Button asChild className={`bg-gradient-to-r ${section.color} text-primary-foreground hover:opacity-90`}>
+                <Button asChild className={`bg-gradient-to-r ${section.color} text-white hover:opacity-90`}>
                   <Link to={section.ctaPath}>
                     {section.ctaLabel}
                     <ArrowRight className="ml-2 h-4 w-4" />

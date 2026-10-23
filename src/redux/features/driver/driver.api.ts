@@ -81,13 +81,6 @@ export const driverApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["DRIVER", "RIDE"],
     }),
-    getAllDrivers: builder.query({
-      query: () => ({
-        url: "/driver",
-        method: "GET",
-      }),
-      providesTags: ["DRIVER", "ADMIN"],
-    }),
     getDriverEarnings: builder.query({
       query: () => ({
         url: "/driver/earnings/me",
@@ -124,7 +117,6 @@ export const {
   useCancelAssignedRideMutation,
   useUpdateDriverRideStatusMutation,
   useGetDriverEarningsQuery,
-  useGetAllDriversQuery,
   useApproveDriverMutation,
   useSuspendDriverMutation,
 } = driverApi;

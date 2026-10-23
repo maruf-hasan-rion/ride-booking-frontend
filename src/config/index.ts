@@ -39,7 +39,6 @@ const resolveDemoLoginEnabled = (): boolean => {
 
 const config = {
   baseUrl: resolveBaseUrl(),
-  orsApiKey: readOptionalEnv("VITE_ORS_API_KEY"),
   isDemoLoginEnabled: resolveDemoLoginEnabled(),
   demoCredentials: {
     admin: {

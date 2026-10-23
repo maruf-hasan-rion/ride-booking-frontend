@@ -92,7 +92,7 @@ const Contact = ({
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-emerald-50/30 via-green-50/20 to-teal-50/20 dark:from-emerald-950/20 dark:via-green-950/10 dark:to-teal-950/10">
+    <section className="py-20 bg-gradient-to-br from-brand-50/30 via-brand-50/20 to-brand-50/20 dark:from-brand-950/20 dark:via-brand-950/10 dark:to-brand-950/10">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           {/* Header */}
@@ -113,8 +113,8 @@ const Contact = ({
                   Get In Touch
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex-shrink-0 w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center">
+                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-brand-50 to-brand-50 dark:from-brand-950/30 dark:to-brand-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-brand-100 dark:bg-brand-900/40 rounded-full flex items-center justify-center">
                       <Phone className="w-5 h-5 text-primary" />
                     </div>
                     <div>
@@ -123,24 +123,24 @@ const Contact = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex-shrink-0 w-12 h-12 bg-teal-100 dark:bg-teal-900/40 rounded-full flex items-center justify-center">
+                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-brand-50 to-brand-50 dark:from-brand-950/30 dark:to-brand-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-brand-100 dark:bg-brand-900/40 rounded-full flex items-center justify-center">
                       <Mail className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                       <p className="font-medium">Email Support</p>
                       <a
                         href={`mailto:${email}`}
-                        className="text-muted-foreground hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                        className="text-muted-foreground hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
                       >
                         {email}
                       </a>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-brand-50 to-brand-50 dark:from-brand-950/30 dark:to-brand-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-brand-100 dark:bg-brand-900/40 rounded-full flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-brand-600 dark:text-brand-400" />
                     </div>
                     <div>
                       <p className="font-medium">Headquarters</p>
@@ -148,8 +148,8 @@ const Contact = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex-shrink-0 w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center">
+                  <div className="flex items-center gap-4 p-4 rounded-xl border bg-gradient-to-r from-brand-50 to-brand-50 dark:from-brand-950/30 dark:to-brand-950/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-brand-100 dark:bg-brand-900/40 rounded-full flex items-center justify-center">
                       <Clock className="w-5 h-5 text-primary" />
                     </div>
                     <div>
@@ -161,7 +161,7 @@ const Contact = ({
               </div>
 
               {/* Quick Help Section */}
-              <div className="bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/40 dark:to-teal-950/30 p-6 rounded-xl border border-primary/25/50">
+              <div className="bg-gradient-to-br from-brand-100 to-brand-100 dark:from-brand-950/40 dark:to-brand-950/30 p-6 rounded-xl border border-primary/25">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-primary dark:bg-primary rounded-full flex items-center justify-center">
                     <Headphones className="w-5 h-5 text-primary-foreground" />
@@ -174,11 +174,11 @@ const Contact = ({
                     24/7 Customer & Driver Support
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-brand-500 rounded-full"></div>
                     Average Response Time: Under 2 Hours
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-brand-500 rounded-full"></div>
                     Multilingual Support Team
                   </li>
                   <li className="flex items-center gap-2">
@@ -203,7 +203,7 @@ const Contact = ({
             </div>
 
             {/* Contact Form */}
-            <div className="bg-card border border-emerald-200/50 dark:border-emerald-800/30 rounded-xl p-8 shadow-xl">
+            <div className="bg-card border border-brand-200/50 dark:border-brand-800/30 rounded-xl p-8 shadow-xl">
               <h3 className="text-xl font-semibold mb-6">
                 Send Us a Message
               </h3>
@@ -314,7 +314,7 @@ const Contact = ({
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r brand-gradient-bg hover:opacity-95 text-primary-foreground"
+                    className="w-full bg-gradient-to-r brand-gradient-bg hover:opacity-95 text-white"
                     size="lg"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Inquiry"}

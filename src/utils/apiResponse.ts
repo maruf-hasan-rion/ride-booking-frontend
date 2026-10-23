@@ -21,58 +21,28 @@ const readFirstArrayMessage = (value: unknown): string | null => {
   return null;
 };
 
-const readEnvelopeData = (value: unknown): unknown => {
-  if (!isRecord(value) || !("data" in value)) {
-    return null;
-  }
-
-  return value.data;
-};
-
 export const extractData = <T>(response: unknown): T | null => {
-  const payload = readEnvelopeData(response);
-
-  if (payload === null || payload === undefined) {
+  if (!isRecord(response) || !("data" in response)) {
     return null;
   }
 
-  if (isRecord(payload) && "data" in payload && !("meta" in payload)) {
-    return payload.data as T;
-  }
-
-  return payload as T;
+  return (response.data as T) ?? null;
 };
 
 export const extractArrayData = <T>(response: unknown): T[] => {
-  const payload = readEnvelopeData(response);
-
-  if (Array.isArray(payload)) {
-    return payload as T[];
+  if (!isRecord(response) || !Array.isArray(response.data)) {
+    return [];
   }
 
-  if (isRecord(payload) && Array.isArray(payload.data)) {
-    return payload.data as T[];
-  }
-
-  if (isRecord(payload) && isRecord(payload.data) && Array.isArray(payload.data.data)) {
-    return payload.data.data as T[];
-  }
-
-  return [];
+  return response.data as T[];
 };
 
 export const extractMeta = (response: unknown): PaginatedMeta | null => {
-  const payload = readEnvelopeData(response);
-
-  if (isRecord(payload) && isRecord(payload.meta)) {
-    return payload.meta as PaginatedMeta;
+  if (!isRecord(response) || !isRecord(response.meta)) {
+    return null;
   }
 
-  if (isRecord(payload) && isRecord(payload.data) && isRecord(payload.data.meta)) {
-    return payload.data.meta as PaginatedMeta;
-  }
-
-  return null;
+  return response.meta as PaginatedMeta;
 };
 
 export const getApiErrorMessage = (error: unknown, fallback: string): string => {

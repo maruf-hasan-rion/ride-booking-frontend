@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
 import { MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -21,8 +21,6 @@ import {
 import type { RideStatus } from "@/types/domain";
 import { extractData, getApiErrorMessage } from "@/utils/apiResponse";
 import { formatCurrencyBDT, formatDateTime } from "@/utils/formatters";
-import { fetchDrivingRoutePolyline } from "@/utils/mapRoute";
-import config from "@/config";
 
 type Coordinate = [number, number];
 
@@ -51,7 +49,6 @@ export default function MyRideDetails() {
   );
 
   const ride = extractData<RideDetailsEntity>(rideResponse);
-  const [routeCoordinates, setRouteCoordinates] = useState<Coordinate[]>([]);
 
   useEffect(() => {
     configureLeafletDefaultMarker();
@@ -81,31 +78,12 @@ export default function MyRideDetails() {
 
   const driverLocation = getCoordinates(ride?.currentLocation);
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const resolveRoute = async () => {
-      if (!pickup || !destination) {
-        setRouteCoordinates([]);
-        return;
-      }
-
-      const route = await fetchDrivingRoutePolyline({
-        pickup,
-        destination,
-        orsApiKey: config.orsApiKey,
-        signal: controller.signal,
-      });
-
-      if (!controller.signal.aborted) {
-        setRouteCoordinates(route.coordinates);
-      }
-    };
-
-    void resolveRoute();
-
-    return () => controller.abort();
-  }, [pickup, destination]);
+  // Direct-line preview only. The API key stays server-side; fare and road
+  // distance come from the backend.
+  const routeCoordinates = useMemo<Coordinate[]>(
+    () => (pickup && destination ? [pickup, destination] : []),
+    [pickup, destination],
+  );
 
   const driverInfo = useMemo(() => {
     const details = getDriverDetails(ride ?? null);

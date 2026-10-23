@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAccount } from "@/hooks/useAccount";
 
 export type EmergencyRole = "RIDER" | "DRIVER";
 
@@ -11,8 +12,10 @@ export type EmergencyContact = {
 
 const STORAGE_KEY_PREFIX = "gomove-emergency-contacts";
 
-const getStorageKey = (role: EmergencyRole) =>
-  `${STORAGE_KEY_PREFIX}-${role.toLowerCase()}`;
+export const getEmergencyContactsStorageKey = (
+  userId: string,
+  role: EmergencyRole,
+) => `${STORAGE_KEY_PREFIX}-${userId}-${role.toLowerCase()}`;
 
 const parseContacts = (value: string | null): EmergencyContact[] => {
   if (!value) return [];
@@ -41,18 +44,28 @@ const persistContacts = (storageKey: string, contacts: EmergencyContact[]) => {
 };
 
 export const useEmergencyContacts = (role: EmergencyRole) => {
-  const storageKey = useMemo(() => getStorageKey(role), [role]);
+  const { user } = useAccount();
+  const userId = user?._id;
+  const storageKey = useMemo(
+    () => (userId ? getEmergencyContactsStorageKey(userId, role) : null),
+    [role, userId],
+  );
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !storageKey) {
+      setContacts([]);
+      return;
+    }
     setContacts(parseContacts(localStorage.getItem(storageKey)));
   }, [storageKey]);
 
   const saveContacts = useCallback(
     (nextContacts: EmergencyContact[]) => {
       setContacts(nextContacts);
-      persistContacts(storageKey, nextContacts);
+      if (storageKey) {
+        persistContacts(storageKey, nextContacts);
+      }
     },
     [storageKey]
   );

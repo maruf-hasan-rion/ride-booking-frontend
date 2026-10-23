@@ -43,15 +43,6 @@ export const rideApi = baseApi.injectEndpoints({
       }),
       providesTags: ["RIDE"],
     }),
-
-    getAllRides: builder.query({
-      query: () => ({
-        url: "/ride",
-        method: "GET",
-      }),
-      providesTags: ["RIDE"],
-      transformResponse: (response: { data: unknown }) => response.data,
-    }),
     getLatestRide: builder.query({
       query: (params: QueryParams | void = {}) => ({
         url: "/ride/latest-ride",
@@ -88,7 +79,6 @@ export const rideApi = baseApi.injectEndpoints({
 
 export const {
   useRideRequestMutation,
-  useGetAllRidesQuery,
   useCancelRideMutation,
   useGetLatestRideQuery,
   useGetMyRideQuery,

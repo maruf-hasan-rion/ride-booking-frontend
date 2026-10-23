@@ -6,7 +6,7 @@ export default function UserSafetySettings() {
       <EmergencyContactsSettings
         role="RIDER"
         title="Safety Settings"
-        description="Manage emergency contacts for rider SOS alerts during active rides."
+        description="Manage contacts stored on this device for your rider account. GoMove does not send them to a server."
       />
     </div>
   );
