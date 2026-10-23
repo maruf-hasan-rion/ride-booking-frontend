@@ -18,7 +18,7 @@ React 19 · Vite 7 · TypeScript · Redux Toolkit + RTK Query (axios base) · Ta
 
 ## Requirements
 
-Node.js ≥ 20 · npm 10+ · a running GoMove backend (reachable `/api/v1`).
+Node.js 24 LTS · npm 10+ · a running GoMove backend (reachable `/api/v1`). The test tooling (`jsdom` 30) requires a modern Node; CI uses Node 24.
 
 ## Setup
 
