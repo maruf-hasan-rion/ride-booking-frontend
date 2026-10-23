@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "@/hooks/useAccount";
+import { getEmergencyContactsStorageKey } from "@/utils/emergencyContacts";
 
 export type EmergencyRole = "RIDER" | "DRIVER";
 
@@ -9,13 +10,6 @@ export type EmergencyContact = {
   phone: string;
   relationship?: string;
 };
-
-const STORAGE_KEY_PREFIX = "gomove-emergency-contacts";
-
-export const getEmergencyContactsStorageKey = (
-  userId: string,
-  role: EmergencyRole,
-) => `${STORAGE_KEY_PREFIX}-${userId}-${role.toLowerCase()}`;
 
 const parseContacts = (value: string | null): EmergencyContact[] => {
   if (!value) return [];

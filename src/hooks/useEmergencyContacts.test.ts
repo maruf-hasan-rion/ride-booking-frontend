@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getEmergencyContactsStorageKey } from "./useEmergencyContacts";
+import { getEmergencyContactsStorageKey } from "@/utils/emergencyContacts";
 
 describe("emergency contact storage scope", () => {
   it("isolates contacts by user and role", () => {
